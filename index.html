@@ -164,21 +164,25 @@
       <h2 class="resenas__title">Descubra el valor que aportamos a diversas marcas líderes</h2>
       <p class="resenas__desc">En Stylo Corporativo nos comprometemos con su éxito; entregamos productos de primer nivel con una atención al cliente atenta y profesional. Nuestra dedicación a la excelencia textil, respaldada por más de 20 años de experiencia, garantiza prendas de alta calidad e interacciones personalizadas mediante un asesoramiento experto. Al ayudar a nuestros clientes a atraer, fidelizar y destacar ante sus audiencias, diseñamos soluciones de identidad que potencian la visibilidad de su marca y hablan de su empresa con distinción desde la primera mirada</p>
       <a href="#contacto" class="btn btn-lime">Cotizar</a>
-
-      <div class="catalog-toolbar catalog-toolbar--left">
-        <button type="button" id="reviews-edit-toggle" class="catalog-toolbar__btn">Editar reseñas</button>
-      </div>
-      <div id="reviews-edit-bar" class="catalog-edit-bar">
-        <span class="catalog-edit-bar__hint">Modo edición: haz clic en el texto, nombre, ciudad o estrellas para cambiarlos.</span>
-        <span class="catalog-edit-bar__actions">
-          <button type="button" id="reviews-reset-btn">Restablecer diseño original</button>
-        </span>
-      </div>
     </div>
     <div class="resenas__col">
-      <div id="reviews-list" class="reviews-list"></div>
-      <div class="catalog-add-wrapper" id="reviews-add-wrapper">
-        <button type="button" id="reviews-add-btn" class="catalog-add-btn">+ Agregar reseña</button>
+      <div class="reviews-list" id="reviews-list">
+        <div class="review-card">
+          <p class="review-card__quote">El trabajo de Stylo Corporativo me pareció realmente excelente. Desataco su atención amable y personalizada, y la calidad de las poleras y gorros. Un muy buen trabajo. La recomiendo 100%.</p>
+          <div class="review-card__footer">
+            <div>
+              <p class="review-card__name">Revivir</p>
+              <p class="review-card__place">Santiago, Chile</p>
+            </div>
+            <div class="review-card__stars">
+              <img src="assets/icons/star.svg" alt="">
+              <img src="assets/icons/star.svg" alt="">
+              <img src="assets/icons/star.svg" alt="">
+              <img src="assets/icons/star.svg" alt="">
+              <img src="assets/icons/star.svg" alt="">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -301,6 +305,5 @@
 
 <script src="editor-ui.js?v=1"></script>
 <script src="products-editor.js?v=4"></script>
-<script src="reviews-editor.js?v=1"></script>
 </body>
 </html>
