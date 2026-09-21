@@ -505,13 +505,19 @@ ul{ margin:0; padding:0; list-style:none; }
 }
 .cta__inner{
   position:relative;
-  max-width:960px;
+  max-width:1240px;
   margin-inline:auto;
-  padding-block:160px;
+  padding:100px clamp(16px, 4.3%, 94px);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:64px;
+  align-items:center;
+}
+.cta__col{
   display:flex;
   flex-direction:column;
-  align-items:center;
-  text-align:center;
+  align-items:flex-start;
+  text-align:left;
   gap:28px;
 }
 .cta__kicker{
@@ -523,12 +529,53 @@ ul{ margin:0; padding:0; list-style:none; }
 }
 .cta__title{
   font-weight:600;
-  font-size:clamp(32px,5vw,60px);
+  font-size:clamp(32px,4.2vw,60px);
   line-height:1.25;
   text-shadow:0 4px 9.5px rgba(0,0,0,.6);
   margin:0;
 }
 .cta .btn{ margin-top:12px; }
+
+.cta-steps{
+  list-style:none;
+  margin:0;
+  padding:0;
+  width:100%;
+  border-top:1px solid rgba(255,255,255,.25);
+}
+.cta-step{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  column-gap:24px;
+  align-items:start;
+  padding:24px 0;
+  border-bottom:1px solid rgba(255,255,255,.25);
+}
+.cta-step__number{
+  font-family:Georgia, 'Times New Roman', serif;
+  font-style:italic;
+  font-weight:700;
+  font-size:20px;
+  color:var(--orange);
+  padding-top:4px;
+}
+.cta-step__title{
+  font-weight:700;
+  font-size:24px;
+  color:var(--white);
+  margin:0 0 6px;
+  grid-column:2;
+}
+.cta-step__desc{
+  font-size:16px;
+  color:rgba(255,255,255,.75);
+  margin:0;
+  grid-column:2;
+}
+
+@media (max-width: 900px){
+  .cta__inner{ grid-template-columns:1fr; padding-block:64px; }
+}
 
 /* ---------------------------------- Marcas ---------------------------------- */
 .marcas{
