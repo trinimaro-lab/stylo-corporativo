@@ -369,6 +369,44 @@ ul{ margin:0; padding:0; list-style:none; }
 }
 .catalog-add-btn:hover{ background:var(--navy); color:var(--white); }
 
+.catalog-toolbar--left{
+  justify-content:flex-start;
+  margin:32px 0 0;
+}
+
+/* ---------------------------------- Editor de reseñas ---------------------------------- */
+.reviews-list{
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+.review-card{ position:relative; }
+.review-card.is-editing{
+  outline:2px dashed var(--cyan);
+  outline-offset:4px;
+}
+.review-card__quote.is-editable,
+.review-card__name.is-editable,
+.review-card__place.is-editable{
+  outline:2px dashed var(--cyan);
+  outline-offset:2px;
+  border-radius:4px;
+  cursor:text;
+}
+.review-card__stars img.is-off{ opacity:.25; }
+.review-card__stars img.is-clickable{ cursor:pointer; }
+.review-card__delete-btn{
+  display:inline-flex;
+  margin-top:16px;
+  background:var(--orange);
+  color:var(--white);
+  border-radius:999px;
+  padding:8px 18px;
+  font-size:13px;
+  font-weight:600;
+}
+.review-card__delete-btn:hover{ background:#e05f00; }
+
 .editor-modal-root{
   display:none;
   position:fixed; inset:0;
