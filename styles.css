@@ -621,33 +621,32 @@ ul{ margin:0; padding:0; list-style:none; }
 }
 
 /* ---------------------------------- Portafolio (acordeón) ---------------------------------- */
-.portafolio-acordeon{ padding-bottom:96px; }
-
-.acordeon{
-  border:1px solid rgba(0,52,90,.14);
-  border-radius:16px;
-  overflow:hidden;
-}
 .acordeon__toggle{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  padding:28px 32px;
+  display:block;
   cursor:pointer;
   list-style:none;
   background:#f7fafc;
+  border-top:1px solid rgba(0,52,90,.14);
+  border-bottom:1px solid rgba(0,52,90,.14);
   color:var(--navy);
   transition:background-color .15s ease;
 }
 .acordeon__toggle::-webkit-details-marker{ display:none; }
 .acordeon__toggle:hover{ background:#eef4f8; }
+.acordeon__toggle-inner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  padding-block:40px;
+  text-align:center;
+}
 .acordeon__toggle-text{
   display:flex;
   flex-direction:column;
   gap:4px;
   font-weight:700;
-  font-size:24px;
+  font-size:26px;
 }
 .acordeon__eyebrow{
   font-weight:600;
@@ -664,10 +663,6 @@ ul{ margin:0; padding:0; list-style:none; }
   transition:transform .25s ease;
 }
 .acordeon[open] .acordeon__chevron{ transform:rotate(180deg); }
-
-.acordeon__panel{
-  border-top:1px solid rgba(0,52,90,.14);
-}
 
 /* ---------------------------------- Reseñas ---------------------------------- */
 .resenas{ background:var(--reviews-bg); padding-block:48px; }

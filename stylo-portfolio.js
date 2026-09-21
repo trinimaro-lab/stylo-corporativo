@@ -50,7 +50,6 @@
           <span>${work.label}</span>
           <strong>${work.title}</strong>
         </div>
-        <button class="stylo-card-add" type="button" data-add="${work.id}" aria-label="Agregar ${work.title} a la cotización">+</button>
       </article>
     `).join("");
 
@@ -107,13 +106,6 @@
     selectionCount.textContent = selectedWorks.length;
     selectionEmpty.hidden = selectedWorks.length > 0;
 
-    grid.querySelectorAll("[data-add]").forEach(button => {
-      const selected = state.selected.has(button.dataset.add);
-      button.classList.toggle("is-selected", selected);
-      button.textContent = selected ? "✓" : "+";
-      button.setAttribute("aria-pressed", String(selected));
-    });
-
     selectedList.innerHTML = selectedWorks.map(work => `
       <div class="stylo-selected-item">
         <img src="${imageUrl(work.image)}" alt="">
@@ -151,13 +143,6 @@
   }
 
   grid.addEventListener("click", event => {
-    const addButton = event.target.closest("[data-add]");
-    if (addButton) {
-      event.stopPropagation();
-      toggleSelection(addButton.dataset.add);
-      return;
-    }
-
     const card = event.target.closest(".stylo-card");
     if (card) openModal(works.find(work => work.id === card.dataset.id));
   });

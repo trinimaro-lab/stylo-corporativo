@@ -106,12 +106,8 @@ body.stylo-no-scroll { overflow: hidden; }
 .stylo-card:hover > img { transform: scale(1.045); }
 .stylo-card-copy { position: absolute; z-index: 2; right: 1rem; bottom: 1rem; left: 1rem; color: white; }
 .stylo-card-copy span { display: block; margin-bottom: .45rem; color: #ffd7ba; font-size: .63rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
-.stylo-card-copy strong { display: block; padding-right: 3rem; font: 600 clamp(1.05rem, 1.5vw, 1.4rem)/1.12 var(--font, 'Poppins', sans-serif); }
-.stylo-card-add { position: absolute; z-index: 3; right: 1rem; bottom: 1rem; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border: 0; border-radius: 50%; color: var(--stylo-green); background: white; cursor: pointer; font-size: 1.2rem; }
-.stylo-card-add:hover,
-.stylo-card-add.is-selected { color: white; background: var(--stylo-orange); }
+.stylo-card-copy strong { display: block; font: 600 clamp(1.05rem, 1.5vw, 1.4rem)/1.12 var(--font, 'Poppins', sans-serif); }
 .stylo-card:focus-visible,
-.stylo-card-add:focus-visible,
 .stylo-filter:focus-visible,
 .stylo-quote-button:focus-visible { outline: 3px solid rgba(255, 117, 21, .45); outline-offset: 3px; }
 .stylo-empty { padding: 5rem 1rem; color: var(--stylo-muted); text-align: center; }
@@ -176,8 +172,7 @@ body.stylo-no-scroll { overflow: hidden; }
   .stylo-grid { gap: .65rem; }
   .stylo-card { aspect-ratio: 3 / 4; border-radius: .85rem; }
   .stylo-card-copy { right: .75rem; bottom: .75rem; left: .75rem; }
-  .stylo-card-copy strong { padding-right: 0; font-size: 1rem; }
-  .stylo-card-add { top: .7rem; right: .7rem; bottom: auto; width: 2.35rem; height: 2.35rem; }
+  .stylo-card-copy strong { font-size: 1rem; }
   .stylo-quote > header,
   .stylo-quote-body { padding-right: 1rem; padding-left: 1rem; }
   .stylo-form-grid { grid-template-columns: 1fr; }
