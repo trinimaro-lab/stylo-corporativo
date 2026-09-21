@@ -26,17 +26,11 @@
   const portfolio = document.querySelector("#stylo-portafolio");
   if (!portfolio) return;
 
-  const state = { filter: "todos", selected: new Set(), activeWork: null };
+  const state = { filter: "todos" };
   const grid = document.querySelector("#stylo-grid");
   const resultCount = document.querySelector("#stylo-result-count");
-  const selectionCount = document.querySelector("#stylo-selection-count");
   const emptyState = document.querySelector("#stylo-empty");
-  const drawer = document.querySelector("#stylo-quote");
-  const backdrop = document.querySelector("#stylo-backdrop");
-  const selectedList = document.querySelector("#stylo-selected-list");
-  const selectionEmpty = document.querySelector("#stylo-selection-empty");
   const modal = document.querySelector("#stylo-modal");
-  const toast = document.querySelector("#stylo-toast");
 
   function imageUrl(file) {
     return `${IMAGE_PATH}${file}`;
@@ -54,7 +48,6 @@
     `).join("");
 
     applyFilters();
-    updateSelection();
   }
 
   function applyFilters() {
@@ -73,73 +66,12 @@
   }
 
   function openModal(work) {
-    state.activeWork = work;
     document.querySelector("#stylo-modal-image").src = imageUrl(work.image);
     document.querySelector("#stylo-modal-image").alt = work.title;
     document.querySelector("#stylo-modal-category").textContent = work.label;
     document.querySelector("#stylo-modal-title").textContent = work.title;
     document.querySelector("#stylo-modal-description").textContent = work.description;
-    updateModalButton();
     modal.showModal();
-  }
-
-  function updateModalButton() {
-    const button = document.querySelector("#stylo-modal-add");
-    const selected = state.activeWork && state.selected.has(state.activeWork.id);
-    button.textContent = selected ? "Quitar de la cotización" : "Agregar a cotización";
-  }
-
-  function toggleSelection(id) {
-    if (state.selected.has(id)) {
-      state.selected.delete(id);
-      showToast("Quitado de tu selección");
-    } else {
-      state.selected.add(id);
-      showToast("Agregado a tu cotización");
-    }
-
-    updateSelection();
-  }
-
-  function updateSelection() {
-    const selectedWorks = works.filter(work => state.selected.has(work.id));
-    selectionCount.textContent = selectedWorks.length;
-    selectionEmpty.hidden = selectedWorks.length > 0;
-
-    selectedList.innerHTML = selectedWorks.map(work => `
-      <div class="stylo-selected-item">
-        <img src="${imageUrl(work.image)}" alt="">
-        <div>
-          <strong>${work.title}</strong>
-          <small>${work.label}</small>
-        </div>
-        <button type="button" data-remove="${work.id}" aria-label="Quitar ${work.title}">×</button>
-      </div>
-    `).join("");
-
-    updateModalButton();
-  }
-
-  function openQuote() {
-    backdrop.hidden = false;
-    requestAnimationFrame(() => drawer.classList.add("is-open"));
-    drawer.setAttribute("aria-hidden", "false");
-    document.body.classList.add("stylo-no-scroll");
-  }
-
-  function closeQuote() {
-    drawer.classList.remove("is-open");
-    drawer.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("stylo-no-scroll");
-    setTimeout(() => { backdrop.hidden = true; }, 300);
-  }
-
-  let toastTimer;
-  function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add("is-visible");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2200);
   }
 
   grid.addEventListener("click", event => {
@@ -170,67 +102,12 @@
     applyFilters();
   });
 
-  document.querySelectorAll("[data-open-stylo-quote]").forEach(button => button.addEventListener("click", openQuote));
-  document.querySelectorAll("[data-close-stylo-quote]").forEach(button => button.addEventListener("click", closeQuote));
-  backdrop.addEventListener("click", closeQuote);
-
-  selectedList.addEventListener("click", event => {
-    const button = event.target.closest("[data-remove]");
-    if (button) toggleSelection(button.dataset.remove);
-  });
-
   document.querySelector(".stylo-modal-close").addEventListener("click", () => modal.close());
   modal.addEventListener("click", event => {
     if (event.target === modal) modal.close();
   });
 
-  document.querySelector("#stylo-modal-add").addEventListener("click", () => {
-    if (state.activeWork) toggleSelection(state.activeWork.id);
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && drawer.classList.contains("is-open")) closeQuote();
-  });
-
-  document.querySelector("#stylo-quote-form").addEventListener("submit", async event => {
-    event.preventDefault();
-
-    const form = new FormData(event.currentTarget);
-    const selectedWorks = works.filter(work => state.selected.has(work.id));
-    const references = selectedWorks.length
-      ? selectedWorks.map(work => `• ${work.title}`).join("\n")
-      : "• Sin referencia seleccionada";
-
-    const summary = [
-      "Solicitud de cotización — Stylo Corporativo",
-      "",
-      `Nombre: ${form.get("nombre")}`,
-      `Empresa: ${form.get("empresa") || "No indicada"}`,
-      `Contacto: ${form.get("contacto")}`,
-      `Cantidad estimada: ${form.get("cantidad")}`,
-      `Estado del logo: ${form.get("logo")}`,
-      "",
-      "Trabajos de referencia:",
-      references,
-      "",
-      `Detalle: ${form.get("detalle") || "Sin detalle adicional"}`
-    ].join("\n");
-
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "Solicitud de cotización — Stylo Corporativo", text: summary });
-        showToast("Solicitud lista para compartir");
-      } else {
-        await navigator.clipboard.writeText(summary);
-        showToast("Solicitud copiada para enviarla por correo o WhatsApp");
-      }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        await navigator.clipboard.writeText(summary);
-        showToast("Solicitud copiada al portapapeles");
-      }
-    }
-  });
+  document.querySelector("#stylo-modal-add").addEventListener("click", () => modal.close());
 
   renderCards();
 })();

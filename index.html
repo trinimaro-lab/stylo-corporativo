@@ -198,10 +198,6 @@
 
           <div class="stylo-results-bar">
             <p><strong id="stylo-result-count">19</strong> trabajos visibles</p>
-            <button class="stylo-quote-button" type="button" data-open-stylo-quote>
-              Solicitar cotización
-              <span id="stylo-selection-count">0</span>
-            </button>
           </div>
 
           <!-- Las tarjetas se cargan desde stylo-portfolio.js -->
@@ -216,76 +212,6 @@
     </details>
 </section>
 
-<!-- Panel de cotización del portafolio -->
-<div class="stylo-backdrop" id="stylo-backdrop" hidden></div>
-
-<aside class="stylo-quote" id="stylo-quote" aria-labelledby="stylo-quote-title" aria-hidden="true">
-  <header>
-    <div>
-      <p class="stylo-eyebrow">Tu selección</p>
-      <h2 id="stylo-quote-title">Solicitar cotización</h2>
-    </div>
-    <button class="stylo-close" type="button" data-close-stylo-quote aria-label="Cerrar">×</button>
-  </header>
-
-  <div class="stylo-quote-body">
-    <div id="stylo-selected-list"></div>
-
-    <p class="stylo-selection-empty" id="stylo-selection-empty">
-      Agrega trabajos del catálogo para mostrarnos el estilo que buscas.
-    </p>
-
-    <form id="stylo-quote-form">
-      <div class="stylo-form-grid">
-        <label>
-          Nombre
-          <input name="nombre" required autocomplete="name">
-        </label>
-
-        <label>
-          Empresa
-          <input name="empresa" autocomplete="organization">
-        </label>
-
-        <label class="stylo-span-2">
-          Correo o teléfono
-          <input name="contacto" required autocomplete="email">
-        </label>
-
-        <label>
-          Cantidad estimada
-          <select name="cantidad">
-            <option>1–24 unidades</option>
-            <option>25–50 unidades</option>
-            <option>51–100 unidades</option>
-            <option>Más de 100</option>
-          </select>
-        </label>
-
-        <label>
-          Estado del logo
-          <select name="logo">
-            <option>Lo tengo listo</option>
-            <option>Necesito ayuda</option>
-            <option>Aún no tengo logo</option>
-          </select>
-        </label>
-
-        <label class="stylo-span-2">
-          Cuéntanos qué necesitas
-          <textarea name="detalle" rows="3" placeholder="Producto, colores, plazo u otra referencia"></textarea>
-        </label>
-      </div>
-
-      <button class="stylo-submit" type="submit">Compartir solicitud</button>
-
-      <p class="stylo-form-note">
-        Se abrirán las opciones de tu dispositivo o se copiará el resumen para enviarlo por correo o WhatsApp.
-      </p>
-    </form>
-  </div>
-</aside>
-
 <!-- Vista ampliada del portafolio -->
 <dialog class="stylo-modal" id="stylo-modal">
   <button class="stylo-modal-close" type="button" aria-label="Cerrar detalle">×</button>
@@ -298,11 +224,9 @@
     <p class="stylo-eyebrow" id="stylo-modal-category"></p>
     <h2 id="stylo-modal-title"></h2>
     <p id="stylo-modal-description"></p>
-    <button class="stylo-submit" type="button" id="stylo-modal-add">Agregar a cotización</button>
+    <a class="stylo-submit" href="#contacto" id="stylo-modal-add">Cotizar este trabajo</a>
   </div>
 </dialog>
-
-<div class="stylo-toast" id="stylo-toast" role="status" aria-live="polite"></div>
 
 <!-- ============================== RESEÑAS ============================== -->
 <section class="resenas" id="reseñas">
