@@ -26,12 +26,11 @@
   const portfolio = document.querySelector("#stylo-portafolio");
   if (!portfolio) return;
 
-  const state = { filter: "todos", search: "", selected: new Set(), activeWork: null };
+  const state = { filter: "todos", selected: new Set(), activeWork: null };
   const grid = document.querySelector("#stylo-grid");
   const resultCount = document.querySelector("#stylo-result-count");
   const selectionCount = document.querySelector("#stylo-selection-count");
   const emptyState = document.querySelector("#stylo-empty");
-  const searchInput = document.querySelector("#stylo-search");
   const drawer = document.querySelector("#stylo-quote");
   const backdrop = document.querySelector("#stylo-backdrop");
   const selectedList = document.querySelector("#stylo-selected-list");
@@ -41,10 +40,6 @@
 
   function imageUrl(file) {
     return `${IMAGE_PATH}${file}`;
-  }
-
-  function normalize(value) {
-    return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
 
   function renderCards() {
@@ -64,15 +59,13 @@
   }
 
   function applyFilters() {
-    const query = normalize(state.search.trim());
     let visible = 0;
 
     grid.querySelectorAll(".stylo-card").forEach(card => {
       const work = works.find(item => item.id === card.dataset.id);
       const categoryMatches = state.filter === "todos" || work.category === state.filter;
-      const searchMatches = !query || normalize(`${work.title} ${work.label} ${work.description}`).includes(query);
 
-      card.hidden = !(categoryMatches && searchMatches);
+      card.hidden = !categoryMatches;
       if (!card.hidden) visible += 1;
     });
 
@@ -185,15 +178,8 @@
     });
   });
 
-  searchInput.addEventListener("input", () => {
-    state.search = searchInput.value;
-    applyFilters();
-  });
-
   document.querySelector("#stylo-clear").addEventListener("click", () => {
     state.filter = "todos";
-    state.search = "";
-    searchInput.value = "";
     portfolio.querySelector(".stylo-filter.is-active")?.classList.remove("is-active");
     portfolio.querySelector('[data-filter="todos"]').classList.add("is-active");
     applyFilters();
