@@ -6,6 +6,7 @@
 <title>Stylo Corporativo — Tu identidad en relieve</title>
 <meta name="description" content="Stylo Corporativo: bordados industriales, estampados y ropa de trabajo. Marketing textil integral para empresas en todo Chile.">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="stylo-portfolio.css">
 </head>
 <body>
 
@@ -156,6 +157,161 @@
   </div>
 </section>
 
+<!-- ============================== PORTAFOLIO (ACORDEÓN) ============================== -->
+<section class="portafolio-acordeon">
+  <div class="container">
+    <details class="acordeon" id="portafolio-acordeon">
+      <summary class="acordeon__toggle">
+        <span class="acordeon__toggle-text">
+          <span class="acordeon__eyebrow">Portafolio seleccionado</span>
+          Ver trabajos realizados
+        </span>
+        <svg class="acordeon__chevron" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </summary>
+
+      <div class="acordeon__panel">
+        <div class="stylo-portfolio" id="stylo-portafolio">
+          <div class="stylo-heading">
+            <div>
+              <p class="stylo-eyebrow">Portafolio seleccionado</p>
+              <h1>Trabajos que inspiran<br>tu próximo proyecto.</h1>
+            </div>
+
+            <p>
+              Explora trabajos reales de bordado, vestuario y merchandising.
+              Guarda tus referencias favoritas para preparar una cotización.
+            </p>
+          </div>
+
+          <div class="stylo-toolbar" aria-label="Controles del catálogo">
+            <div class="stylo-filters" role="group" aria-label="Filtrar por categoría">
+              <button class="stylo-filter is-active" type="button" data-filter="todos">Todos</button>
+              <button class="stylo-filter" type="button" data-filter="bordado">Bordado</button>
+              <button class="stylo-filter" type="button" data-filter="vestuario">Vestuario</button>
+              <button class="stylo-filter" type="button" data-filter="drinkware">Vasos y tazones</button>
+              <button class="stylo-filter" type="button" data-filter="merchandising">Merchandising</button>
+            </div>
+
+            <label class="stylo-search">
+              <span class="stylo-sr-only">Buscar en el catálogo</span>
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path>
+              </svg>
+              <input type="search" id="stylo-search" placeholder="Buscar trabajo" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="stylo-results-bar">
+            <p><strong id="stylo-result-count">19</strong> trabajos visibles</p>
+            <button class="stylo-quote-button" type="button" data-open-stylo-quote>
+              Solicitar cotización
+              <span id="stylo-selection-count">0</span>
+            </button>
+          </div>
+
+          <!-- Las tarjetas se cargan desde stylo-portfolio.js -->
+          <div class="stylo-grid" id="stylo-grid"></div>
+
+          <div class="stylo-empty" id="stylo-empty" hidden>
+            <p>No encontramos trabajos con ese criterio.</p>
+            <button type="button" id="stylo-clear">Ver todos los trabajos</button>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- Panel de cotización del portafolio -->
+<div class="stylo-backdrop" id="stylo-backdrop" hidden></div>
+
+<aside class="stylo-quote" id="stylo-quote" aria-labelledby="stylo-quote-title" aria-hidden="true">
+  <header>
+    <div>
+      <p class="stylo-eyebrow">Tu selección</p>
+      <h2 id="stylo-quote-title">Solicitar cotización</h2>
+    </div>
+    <button class="stylo-close" type="button" data-close-stylo-quote aria-label="Cerrar">×</button>
+  </header>
+
+  <div class="stylo-quote-body">
+    <div id="stylo-selected-list"></div>
+
+    <p class="stylo-selection-empty" id="stylo-selection-empty">
+      Agrega trabajos del catálogo para mostrarnos el estilo que buscas.
+    </p>
+
+    <form id="stylo-quote-form">
+      <div class="stylo-form-grid">
+        <label>
+          Nombre
+          <input name="nombre" required autocomplete="name">
+        </label>
+
+        <label>
+          Empresa
+          <input name="empresa" autocomplete="organization">
+        </label>
+
+        <label class="stylo-span-2">
+          Correo o teléfono
+          <input name="contacto" required autocomplete="email">
+        </label>
+
+        <label>
+          Cantidad estimada
+          <select name="cantidad">
+            <option>1–24 unidades</option>
+            <option>25–50 unidades</option>
+            <option>51–100 unidades</option>
+            <option>Más de 100</option>
+          </select>
+        </label>
+
+        <label>
+          Estado del logo
+          <select name="logo">
+            <option>Lo tengo listo</option>
+            <option>Necesito ayuda</option>
+            <option>Aún no tengo logo</option>
+          </select>
+        </label>
+
+        <label class="stylo-span-2">
+          Cuéntanos qué necesitas
+          <textarea name="detalle" rows="3" placeholder="Producto, colores, plazo u otra referencia"></textarea>
+        </label>
+      </div>
+
+      <button class="stylo-submit" type="submit">Compartir solicitud</button>
+
+      <p class="stylo-form-note">
+        Se abrirán las opciones de tu dispositivo o se copiará el resumen para enviarlo por correo o WhatsApp.
+      </p>
+    </form>
+  </div>
+</aside>
+
+<!-- Vista ampliada del portafolio -->
+<dialog class="stylo-modal" id="stylo-modal">
+  <button class="stylo-modal-close" type="button" aria-label="Cerrar detalle">×</button>
+
+  <div class="stylo-modal-media">
+    <img id="stylo-modal-image" src="" alt="">
+  </div>
+
+  <div class="stylo-modal-copy">
+    <p class="stylo-eyebrow" id="stylo-modal-category"></p>
+    <h2 id="stylo-modal-title"></h2>
+    <p id="stylo-modal-description"></p>
+    <button class="stylo-submit" type="button" id="stylo-modal-add">Agregar a cotización</button>
+  </div>
+</dialog>
+
+<div class="stylo-toast" id="stylo-toast" role="status" aria-live="polite"></div>
+
 <!-- ============================== RESEÑAS ============================== -->
 <section class="resenas" id="reseñas">
   <div class="container resenas__grid">
@@ -305,5 +461,6 @@
 
 <script src="editor-ui.js?v=1"></script>
 <script src="products-editor.js?v=4"></script>
+<script src="stylo-portfolio.js?v=1" defer></script>
 </body>
 </html>

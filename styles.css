@@ -620,6 +620,55 @@ ul{ margin:0; padding:0; list-style:none; }
   .marcas__logos{ grid-template-columns:repeat(2, 1fr); }
 }
 
+/* ---------------------------------- Portafolio (acordeón) ---------------------------------- */
+.portafolio-acordeon{ padding-bottom:96px; }
+
+.acordeon{
+  border:1px solid rgba(0,52,90,.14);
+  border-radius:16px;
+  overflow:hidden;
+}
+.acordeon__toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:28px 32px;
+  cursor:pointer;
+  list-style:none;
+  background:#f7fafc;
+  color:var(--navy);
+  transition:background-color .15s ease;
+}
+.acordeon__toggle::-webkit-details-marker{ display:none; }
+.acordeon__toggle:hover{ background:#eef4f8; }
+.acordeon__toggle-text{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  font-weight:700;
+  font-size:24px;
+}
+.acordeon__eyebrow{
+  font-weight:600;
+  font-size:13px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--orange);
+}
+.acordeon__chevron{
+  width:28px;
+  height:28px;
+  flex:none;
+  color:var(--navy);
+  transition:transform .25s ease;
+}
+.acordeon[open] .acordeon__chevron{ transform:rotate(180deg); }
+
+.acordeon__panel{
+  border-top:1px solid rgba(0,52,90,.14);
+}
+
 /* ---------------------------------- Reseñas ---------------------------------- */
 .resenas{ background:var(--reviews-bg); padding-block:48px; }
 .resenas__grid{
