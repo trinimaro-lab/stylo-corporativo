@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stylo Corporativo — Tu identidad en relieve</title>
+<meta name="description" content="Stylo Corporativo: bordados industriales, estampados y ropa de trabajo. Marketing textil integral para empresas en todo Chile.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============================== HEADER / HERO ============================== -->
+<header class="hero" id="inicio">
+  <img class="hero__bg" src="assets/hero-bg.jpg" alt="">
+  <div class="hero__scrim" aria-hidden="true"></div>
+
+  <div class="hero__inner container">
+    <nav class="hero__nav">
+      <a class="hero__logo" href="#inicio" aria-label="Stylo Corporativo — inicio">
+        <img src="assets/logo-white.png" alt="Stylo Corporativo">
+      </a>
+      <div class="hero__links">
+        <a href="#inicio">Inicio</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#marcas">Clientes</a>
+        <a href="#catalogo">Galería</a>
+        <a class="btn btn-lime" href="#contacto">Cotizar</a>
+      </div>
+    </nav>
+
+    <div class="hero__content">
+      <p class="hero__kicker">Tu marca habla desde la primera mirada.</p>
+      <p class="hero__title">¡Potencia tu imagen corporativa<br>con bordados de excelencia!</p>
+
+      <form class="hero__search" action="#contacto">
+        <input type="text" placeholder="Necesitas algo especial?" aria-label="Necesitas algo especial?">
+        <button type="submit" class="btn btn-lime">Contáctanos</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="hero__strip" aria-hidden="true"></div>
+</header>
+
+<!-- ============================== SERVICIOS / INTRO ============================== -->
+<section class="intro container" id="servicios">
+  <div class="intro__grid">
+    <div class="intro__text">
+      <p class="intro__kicker">Su Socio Integral en Marketing Textil: Bordados Industriales, Estampados y Ropa de Trabajo</p>
+      <h2 class="intro__title">¿Su marca ya tiene el Stylo Corporativo?</h2>
+      <div class="intro__desc">
+        <p>Stylo Corporativo es su aliado estratégico para soluciones integrales de branding y marketing textil, especializado en vestuario personalizado, artículos promocionales y servicios de bordado industrial de alta precisión. Atendemos a una amplia gama de sectores, incluyendo la construcción, industria, minería, educación y comercio, ofreciendo un servicio personalizado y recomendaciones expertas para asegurar que su identidad de marca destaque con elegancia y profesionalismo.</p>
+        <p>Con más de 20 años de trayectoria en el mercado nacional y una capacidad de producción que supera las 20,000 prendas mensuales, garantizamos soluciones a tiempo que se adaptan a sus necesidades específicas y presupuesto. Con presencia en Santiago y despachos garantizados a todo Chile, le entregamos el respaldo y la calidad necesarios para que su empresa resalte en el competitivo mercado actual</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <img src="assets/icons/icon-clientes.svg" alt="">
+          <span>Clientes Reales</span>
+        </div>
+        <div class="stat">
+          <img src="assets/icons/icon-productos.svg" alt="">
+          <span>Productos Reales</span>
+        </div>
+        <div class="stat">
+          <img src="assets/icons/icon-resultados.svg" alt="">
+          <span>Resultados Reales</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="intro__image">
+      <img src="assets/hero-side.png" alt="Bordado industrial de precisión">
+    </div>
+  </div>
+</section>
+
+<!-- ============================== CATÁLOGO / NUESTRO TRABAJO ============================== -->
+<section class="catalogo" id="catalogo">
+  <div class="container">
+    <h2 class="section-title">Nuestro Trabajo</h2>
+
+    <div class="catalog-toolbar">
+      <button type="button" id="catalog-edit-toggle" class="catalog-toolbar__btn">Editar catálogo</button>
+    </div>
+
+    <div id="catalog-edit-bar" class="catalog-edit-bar">
+      <span class="catalog-edit-bar__hint">Modo edición: pasa el mouse sobre una foto para cambiarla, o haz clic en un título para escribirlo.</span>
+      <span class="catalog-edit-bar__actions">
+        <button type="button" id="catalog-reset-btn">Restablecer diseño original</button>
+      </span>
+    </div>
+
+    <div class="product-grid" id="product-grid"></div>
+
+    <div class="catalog-add-wrapper" id="catalog-add-wrapper">
+      <button type="button" id="catalog-add-btn" class="catalog-add-btn">+ Agregar producto</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== CTA ============================== -->
+<section class="cta">
+  <img class="cta__bg" src="assets/cta-bg.png" alt="">
+  <div class="cta__scrim" aria-hidden="true"></div>
+  <div class="cta__inner">
+    <p class="cta__kicker">Comprometidos con tu identidad</p>
+    <p class="cta__title">Ahora con Asesoría y Cotización Sin Costo</p>
+    <a href="#contacto" class="btn btn-lime">Cotiza aquí</a>
+  </div>
+</section>
+
+<!-- ============================== MARCAS ============================== -->
+<section class="marcas container" id="marcas">
+  <div class="marcas__grid">
+    <div class="marcas__image">
+      <img src="assets/brands/brands-collage.png" alt="Trabajos textiles realizados por Stylo Corporativo">
+    </div>
+    <div class="marcas__content">
+      <h2 class="marcas__title">Marcas que confían en nosotros</h2>
+      <p class="marcas__desc">Stylo Corporativo se enorgullece de entregar productos textiles de primer nivel y confección técnica de excelencia, asegurando una calidad inigualable y profesionalismo para cada cliente. Ya sea que represente a un pequeño emprendimiento o a una gran corporación, nuestras soluciones versátiles y personalizadas están diseñadas para satisfacer las necesidades de negocios en todos los sectores e industrias.</p>
+      <div class="marcas__logos">
+        <img src="assets/brands/brand-1.png" alt="Marca cliente 1">
+        <img src="assets/brands/brand-2.png" alt="Marca cliente 2">
+        <img src="assets/brands/brand-3.png" alt="Marca cliente 3">
+        <img src="assets/brands/brand-4.png" alt="Marca cliente 4">
+        <img src="assets/brands/brand-5.png" alt="Marca cliente 5">
+        <img src="assets/brands/brand-6.png" alt="Marca cliente 6">
+        <img src="assets/brands/brand-7.png" alt="Marca cliente 7">
+        <img src="assets/brands/brand-8.png" alt="Marca cliente 8">
+        <img src="assets/brands/brand-9.png" alt="Marca cliente 9">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== RESEÑAS ============================== -->
+<section class="resenas">
+  <div class="container resenas__grid">
+    <div class="resenas__col">
+      <p class="resenas__kicker">Lo que Dicen Nuestros Clientes</p>
+      <h2 class="resenas__title">Descubra el valor que aportamos a diversas marcas líderes</h2>
+      <p class="resenas__desc">En Stylo Corporativo nos comprometemos con su éxito; entregamos productos de primer nivel con una atención al cliente atenta y profesional. Nuestra dedicación a la excelencia textil, respaldada por más de 20 años de experiencia, garantiza prendas de alta calidad e interacciones personalizadas mediante un asesoramiento experto. Al ayudar a nuestros clientes a atraer, fidelizar y destacar ante sus audiencias, diseñamos soluciones de identidad que potencian la visibilidad de su marca y hablan de su empresa con distinción desde la primera mirada</p>
+      <a href="#contacto" class="btn btn-lime">Cotizar</a>
+    </div>
+    <div class="resenas__col">
+      <div class="review-card">
+        <p class="review-card__quote">El trabajo de Stylo Corporativo me pareció realmente excelente. Desataco su atención amable y personalizada, y la calidad de las poleras y gorros. Un muy buen trabajo. La recomiendo 100%.</p>
+        <div class="review-card__footer">
+          <div>
+            <p class="review-card__name">Revivir</p>
+            <p class="review-card__place">Santiago, Chile</p>
+          </div>
+          <div class="review-card__stars">
+            <img src="assets/icons/star.svg" alt="">
+            <img src="assets/icons/star.svg" alt="">
+            <img src="assets/icons/star.svg" alt="">
+            <img src="assets/icons/star.svg" alt="">
+            <img src="assets/icons/star.svg" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== CONTACTO ============================== -->
+<section class="contacto" id="contacto">
+  <img class="contacto__bg" src="assets/contact-bg.png" alt="">
+  <div class="contacto__scrim" aria-hidden="true"></div>
+
+  <div class="container contacto__grid">
+    <div class="contacto__col">
+      <h2 class="contacto__title">Cotiza tu Proyecto</h2>
+      <p class="contacto__desc">En Stylo Corporativo transformamos tu marca en identidad: bordados y estampados de calidad para empresas, pymes y personas naturales. Cuéntanos qué necesitas y te enviamos una cotización sin costo.</p>
+    </div>
+
+    <div class="contacto__col">
+      <form class="form-panel">
+        <div class="form-row">
+          <div class="form-field">
+            <input type="text" name="nombre" placeholder="Nombre*" required>
+          </div>
+          <div class="form-field">
+            <input type="text" name="apellido" placeholder="Apellido*" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <input type="email" name="email" placeholder="Email*" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <input type="text" name="empresa" placeholder="Empresa*" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <input type="tel" name="telefono" placeholder="Teléfono*" required>
+          </div>
+        </div>
+
+        <div class="form-actions-top">
+          <label class="form-attach">
+            <img src="assets/icons/paperclip.svg" alt="">
+            Adjuntar archivo
+            <input type="file" name="archivo" class="visually-hidden">
+          </label>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <textarea name="mensaje" placeholder="Mensaje"></textarea>
+          </div>
+        </div>
+
+        <div class="form-submit-row">
+          <button type="submit" class="btn-submit">Enviar cotización</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <p class="footer__tagline">Tu identidad en relieve</p>
+        <img class="footer__logo" src="assets/footer-logo.png" alt="Stylo Corporativo">
+      </div>
+
+      <div class="footer__cols">
+        <div class="footer__col">
+          <h4>Empresa</h4>
+          <ul>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#catalogo">Catálogo de Productos</a></li>
+            <li><a href="#catalogo">Galería</a></li>
+            <li><a href="#contacto">Proceso de Pedido</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Contacto</h4>
+          <ul>
+            <li><a href="#contacto">Cotiza tu Proyecto</a></li>
+            <li><a href="#contacto">Preguntas Frecuentes</a></li>
+            <li><a href="#contacto">[Teléfono]</a></li>
+            <li><a href="#contacto">[Correo]</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>More</h4>
+          <ul>
+            <li><a href="#contacto">FAQ</a></li>
+            <li><a href="#reseñas">Testimonios</a></li>
+            <li><a href="#catalogo">Catálogo</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <div class="footer__social">
+            <a href="#" aria-label="Facebook"><img src="assets/icons/social-facebook.svg" alt=""></a>
+            <a href="#" aria-label="Instagram"><img src="assets/icons/social-instagram.svg" alt=""></a>
+            <a href="#" aria-label="Linkedin"><img src="assets/icons/social-linkedin.svg" alt=""></a>
+            <a href="#" aria-label="Twitter"><img src="assets/icons/social-twitter.svg" alt=""></a>
+            <a href="#" aria-label="Pinterest"><img src="assets/icons/social-pinterest.svg" alt=""></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="footer__rule">
+
+  <div class="container footer__bottom">
+    <p>© 2026 Stylo Corporativo. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script src="products-editor.js?v=3"></script>
+</body>
+</html>
