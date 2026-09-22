@@ -14,7 +14,7 @@ body { margin: 0; background: var(--stylo-paper); }
 
 .stylo-portfolio {
   min-height: 100vh;
-  padding: clamp(4rem, 8vw, 8rem) clamp(1rem, 5vw, 5.5rem);
+  padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 10vw, 10rem);
   color: var(--stylo-green-dark);
   background: var(--stylo-paper);
   font-family: var(--font, 'Poppins', sans-serif);
@@ -24,7 +24,7 @@ body { margin: 0; background: var(--stylo-paper); }
 .stylo-modal * { box-sizing: border-box; }
 
 .stylo-heading {
-  max-width: 1500px;
+  max-width: 1200px;
   margin: 0 auto 1.75rem;
 }
 
@@ -48,7 +48,7 @@ body { margin: 0; background: var(--stylo-paper); }
   display: flex;
   align-items: center;
   gap: 1rem;
-  max-width: 1500px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 1rem 0;
   background: rgba(255, 253, 250, .94);
@@ -68,7 +68,7 @@ body { margin: 0; background: var(--stylo-paper); }
 .stylo-filter:hover,
 .stylo-filter.is-active { color: white; background: var(--stylo-green); border-color: var(--stylo-green); }
 
-.stylo-results-bar { max-width: 1500px; margin: .7rem auto 1rem; }
+.stylo-results-bar { max-width: 1200px; margin: .7rem auto 1rem; }
 .stylo-results-bar p { margin: 0; color: var(--stylo-muted); font-size: .82rem; }
 
 .stylo-submit {
@@ -89,7 +89,7 @@ body { margin: 0; background: var(--stylo-paper); }
 }
 .stylo-submit:hover { background: var(--stylo-orange-dark); }
 
-.stylo-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; max-width: 1500px; margin: 0 auto; }
+.stylo-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; max-width: 1200px; margin: 0 auto; }
 .stylo-card { position: relative; overflow: hidden; aspect-ratio: 4 / 5; border-radius: 1.1rem; background: var(--stylo-cream); cursor: pointer; outline: 0; }
 .stylo-card[hidden] { display: none; }
 .stylo-card::after { content: ""; position: absolute; inset: 35% 0 0; background: linear-gradient(transparent, rgba(7, 29, 27, .88)); pointer-events: none; }
