@@ -64,13 +64,19 @@
     <p class="admin-hint">Sube fotos de trabajos terminados, con su título, categoría y descripción. Aparecen en el acordeón de portafolio de la web.</p>
     <div id="portfolio-editor-root"></div>
   </section>
+
+  <section class="admin-section">
+    <h2>Marcas que confían en nosotros</h2>
+    <p class="admin-hint">Edita el título, la descripción, la foto grande y los logos de marcas de esa sección.</p>
+    <div id="brands-editor-root"></div>
+  </section>
 </div>
 
 <script src="editor-ui.js"></script>
 <script>
   window.StyloEditorUI.unlockAndRun(
     "Panel de administración",
-    "Ingresa la clave para editar el catálogo, las reseñas y el portafolio de Stylo Corporativo.",
+    "Ingresa la clave para editar el catálogo, las reseñas, el portafolio y las marcas de Stylo Corporativo.",
     function () {
       document.getElementById("admin-gate").style.display = "none";
       document.getElementById("admin-content").style.display = "block";
@@ -80,5 +86,6 @@
 <script src="products-editor.js"></script>
 <script src="reviews-editor.js"></script>
 <script src="portfolio-editor.js"></script>
+<script src="brands-editor.js"></script>
 </body>
 </html>

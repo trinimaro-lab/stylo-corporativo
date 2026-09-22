@@ -1302,6 +1302,81 @@ body.quote-no-scroll{ overflow:hidden; }
   .footer__cols{ grid-template-columns:1fr; }
 }
 
+/* ---------------------------------- Editor de marcas ---------------------------------- */
+.brands-editor-section-fields{
+  display:grid;
+  gap:12px;
+  margin-bottom:24px;
+}
+.brands-editor-section-fields input,
+.brands-editor-section-fields textarea{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid rgba(0,52,90,.2);
+  border-radius:8px;
+  font-family:var(--font);
+  font-size:13px;
+  color:var(--black);
+}
+.brands-editor-section-fields textarea{ resize:vertical; }
+.brands-editor-collage__upload{
+  width:220px;
+  height:120px;
+  border-radius:10px;
+  border:1px dashed rgba(0,52,90,.3);
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  background:#f7f9fa;
+}
+.brands-editor-collage__upload img{ width:100%; height:100%; object-fit:cover; }
+.brands-editor-collage__upload span{ font-size:12px; font-weight:600; color:var(--navy); }
+.brands-editor-logos-heading{ color:var(--navy); font-size:15px; margin:0 0 14px; }
+.brands-editor-logos-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+  gap:14px;
+  margin-bottom:20px;
+}
+.brands-editor-logo-card{
+  border:1px solid rgba(0,52,90,.14);
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:center;
+}
+.brands-editor-logo-card__upload{
+  width:100%;
+  height:70px;
+  border-radius:8px;
+  background:#f7f9fa;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  overflow:hidden;
+}
+.brands-editor-logo-card__upload img{ width:100%; height:100%; object-fit:contain; }
+.brands-editor-logo-card input[type="text"]{
+  width:100%;
+  padding:7px 9px;
+  border:1px solid rgba(0,52,90,.2);
+  border-radius:8px;
+  font-family:var(--font);
+  font-size:11px;
+}
+.brands-editor-logo-card__delete{
+  background:var(--orange);
+  color:var(--white);
+  border-radius:999px;
+  padding:6px 14px;
+  font-size:11px;
+  font-weight:600;
+}
+.brands-editor-logo-card__delete:hover{ background:#e05f00; }
+
 /* ---------------------------------- Utilidades responsivas generales ---------------------------------- */
 @media (max-width: 900px){
   .hero__links{ gap:22px; }
