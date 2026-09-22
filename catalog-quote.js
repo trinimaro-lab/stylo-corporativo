@@ -9,6 +9,16 @@
 (function () {
   "use strict";
 
+  const FALLBACK_PRODUCTS = [
+    { id: "p1", title: "Bordado corporativo", image: "assets/products/bordado-corporativo.png" },
+    { id: "p2", title: "Estampado (DTF/serigrafía)", image: "assets/products/estampado-dtf-serigrafia.png" },
+    { id: "p3", title: "Sublimación", image: "assets/products/sublimacion.png" },
+    { id: "p4", title: "Merchandising promocional", image: "assets/products/merchandising-promocional.png" },
+    { id: "p5", title: "Regalos y eventos personalizados", image: "assets/products/regalos-eventos-personalizados.png" },
+    { id: "p6", title: "Merchandising deportivo / fanaticada", image: "assets/products/merchandising-deportivo-fanaticada.png" },
+    { id: "p7", title: "Confección y uniformes corporativos", image: "assets/products/confeccion-uniformes-corporativos.png" }
+  ];
+
   const grid = document.getElementById("product-grid");
   const drawer = document.getElementById("quote-drawer");
   const backdrop = document.getElementById("quote-backdrop");
@@ -22,6 +32,52 @@
   if (!grid || !drawer) return;
 
   const selected = new Map();
+
+  function buildCard(product) {
+    const card = document.createElement("article");
+    card.className = "product-card";
+    card.dataset.id = product.id;
+    card.dataset.title = product.title;
+
+    const media = document.createElement("div");
+    media.className = "product-card__media";
+
+    const img = document.createElement("img");
+    img.src = product.image;
+    img.alt = product.title;
+    img.loading = "lazy";
+
+    const addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.className = "product-card__add-btn";
+    addBtn.textContent = "+";
+    addBtn.setAttribute("aria-label", `Agregar ${product.title} a la cotización`);
+
+    media.appendChild(img);
+    media.appendChild(addBtn);
+
+    const caption = document.createElement("p");
+    caption.className = "product-card__caption";
+    caption.textContent = product.title;
+
+    card.appendChild(media);
+    card.appendChild(caption);
+    return card;
+  }
+
+  async function loadProducts() {
+    let products = FALLBACK_PRODUCTS;
+    try {
+      const res = await fetch("/api/products");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length) products = data;
+      }
+    } catch (e) {}
+
+    grid.innerHTML = "";
+    products.forEach(product => grid.appendChild(buildCard(product)));
+  }
 
   function cardsList() {
     return Array.from(grid.querySelectorAll(".product-card"));
@@ -155,4 +211,5 @@
   });
 
   renderSelected();
+  loadProducts();
 })();

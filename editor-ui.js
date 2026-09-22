@@ -3,13 +3,18 @@
    Expone window.StyloEditorUI con un modal de clave, un confirm y un toast,
    todos con la misma identidad visual del sitio (sin diálogos nativos del
    navegador, que algunos navegadores bloquean).
+
+   La clave que se ingresa se guarda como "token" y se envía en el header
+   x-admin-token a las funciones de Netlify (/api/products, /api/reviews),
+   que la validan contra la variable de entorno ADMIN_TOKEN. La clave NUNCA
+   se guarda en el código: si es incorrecta, la API responde 401 y se vuelve
+   a pedir.
    ========================================================================== */
 
 window.StyloEditorUI = (function () {
   "use strict";
 
-  var EDIT_PASSWORD = "stylo2026"; // cámbiala por la clave que prefieras
-  var SESSION_FLAG = "stylo_edit_unlocked";
+  var TOKEN_KEY = "stylo_admin_token";
 
   var overlayRoot = document.createElement("div");
   overlayRoot.className = "editor-modal-root";
@@ -20,8 +25,20 @@ window.StyloEditorUI = (function () {
     overlayRoot.classList.remove("is-open");
   }
 
+  function getToken() {
+    return sessionStorage.getItem(TOKEN_KEY) || "";
+  }
+
+  function setToken(value) {
+    sessionStorage.setItem(TOKEN_KEY, value);
+  }
+
+  function clearToken() {
+    sessionStorage.removeItem(TOKEN_KEY);
+  }
+
   function isUnlocked() {
-    return sessionStorage.getItem(SESSION_FLAG) === "1";
+    return !!getToken();
   }
 
   function askPassword(title, description, onSuccess) {
@@ -39,18 +56,13 @@ window.StyloEditorUI = (function () {
     overlayRoot.classList.add("is-open");
 
     var input = document.getElementById("editor-pass-input");
-    var error = document.getElementById("editor-pass-error");
     input.focus();
 
     function attempt() {
-      if (input.value === EDIT_PASSWORD) {
-        sessionStorage.setItem(SESSION_FLAG, "1");
-        closeModal();
-        onSuccess();
-      } else {
-        error.hidden = false;
-        input.select();
-      }
+      if (!input.value) return;
+      setToken(input.value);
+      closeModal();
+      onSuccess();
     }
 
     overlayRoot.addEventListener("click", function handler(ev) {
@@ -62,6 +74,11 @@ window.StyloEditorUI = (function () {
       if (ev.key === "Enter") { ev.preventDefault(); attempt(); }
       if (ev.key === "Escape") { closeModal(); }
     });
+  }
+
+  function showPasswordError() {
+    var error = document.getElementById("editor-pass-error");
+    if (error) error.hidden = false;
   }
 
   function askConfirm(message, onConfirm) {
@@ -102,10 +119,27 @@ window.StyloEditorUI = (function () {
     askPassword(editorTitle, editorDescription, run);
   }
 
+  // fetch con el header de autorización; si la API dice que la clave está
+  // mal (401), la borra y avisa para que se vuelva a pedir.
+  async function authFetch(url, options) {
+    options = options || {};
+    var headers = Object.assign({}, options.headers || {}, { "x-admin-token": getToken() });
+    var res = await fetch(url, Object.assign({}, options, { headers: headers }));
+    if (res.status === 401) {
+      clearToken();
+      showToast("Clave incorrecta o vencida. Vuelve a intentar.");
+    }
+    return res;
+  }
+
   return {
     askConfirm: askConfirm,
     showToast: showToast,
+    showPasswordError: showPasswordError,
     isUnlocked: isUnlocked,
-    unlockAndRun: unlockAndRun
+    unlockAndRun: unlockAndRun,
+    getToken: getToken,
+    clearToken: clearToken,
+    authFetch: authFetch
   };
 })();

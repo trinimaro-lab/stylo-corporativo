@@ -1,14 +1,12 @@
 /* ==========================================================================
    Carrusel de reseñas ("Lo que Dicen Nuestros Clientes")
-   Lee las reseñas desde localStorage (mismo formato que usa el editor de
-   reseñas) y las muestra en una fila que se desplaza sola, pausándose al
-   pasar el mouse. Sin reseñas guardadas, usa la reseña real del diseño.
+   Lee las reseñas desde la API (/api/reviews, respaldada por la base de
+   datos) y las muestra en una fila que se desplaza sola, pausándose al
+   pasar el mouse. Si la API no responde, usa la reseña real del diseño.
    ========================================================================== */
 
 (function () {
   "use strict";
-
-  const STORAGE_KEY = "stylo_resenas_v2";
 
   const DEFAULT_REVIEWS = [
     {
@@ -24,12 +22,12 @@
   const marquee = document.getElementById("reviews-marquee");
   if (!track || !marquee) return;
 
-  function loadReviews() {
+  async function loadReviews() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length) return parsed;
+      const res = await fetch("/api/reviews");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length) return data;
       }
     } catch (e) {}
     return DEFAULT_REVIEWS;
@@ -83,8 +81,8 @@
     return card;
   }
 
-  function render() {
-    const reviews = loadReviews();
+  async function render() {
+    const reviews = await loadReviews();
     track.innerHTML = "";
 
     // Se duplica la lista para que el desplazamiento sea continuo (sin salto).

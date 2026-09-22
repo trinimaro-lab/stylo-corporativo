@@ -1,58 +1,39 @@
 /* ==========================================================================
-   Editor de reseñas — panel de administración (NO enlazado a index.html).
-   Guarda en el mismo localStorage que lee reviews-marquee.js
-   ("stylo_resenas_v2"), con foto, nombre, reseña y empresa por cliente.
+   Editor de reseñas — panel de administración (admin.html)
+   Lee y guarda en /api/reviews (base de datos), visible para todos los
+   visitantes del sitio apenas se guarda un cambio.
 
-   Cómo usarlo: crea una página aparte (o una sección del futuro panel de
-   administración) con:
+   Cómo usarlo: en una página con:
      <div id="reviews-editor-root"></div>
      <script src="editor-ui.js"></script>
      <script src="reviews-editor.js"></script>
-   y este script arma ahí la lista editable.
+   este script arma ahí la lista editable.
    ========================================================================== */
 
 (function () {
   "use strict";
 
   const UI = window.StyloEditorUI;
-  const STORAGE_KEY = "stylo_resenas_v2";
-
-  const DEFAULT_REVIEWS = [
-    {
-      id: "r1",
-      name: "Revivir",
-      company: "",
-      review: "El trabajo de Stylo Corporativo me pareció realmente excelente. Desataco su atención amable y personalizada, y la calidad de las poleras y gorros. Un muy buen trabajo. La recomiendo 100%.",
-      photo: ""
-    }
-  ];
 
   const root = document.getElementById("reviews-editor-root");
   if (!root) return;
 
-  function cloneDefaults() {
-    return DEFAULT_REVIEWS.map(r => ({ id: r.id, name: r.name, company: r.company, review: r.review, photo: r.photo }));
+  let reviews = [];
+
+  async function api(method, body) {
+    const res = await UI.authFetch("/api/reviews", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if (!res.ok) throw new Error("request failed: " + res.status);
+    return res.json();
   }
 
-  function loadReviews() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length) return parsed;
-      }
-    } catch (e) {}
-    return cloneDefaults();
-  }
-
-  let reviews = loadReviews();
-
-  function saveReviews() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
-    } catch (e) {
-      UI.showToast("No se pudo guardar (almacenamiento local lleno o bloqueado).");
-    }
+  async function loadReviews() {
+    const res = await fetch("/api/reviews");
+    reviews = res.ok ? await res.json() : [];
+    render();
   }
 
   function uid() {
@@ -75,29 +56,21 @@
     addBtn.type = "button";
     addBtn.className = "catalog-add-btn";
     addBtn.textContent = "+ Agregar reseña";
-    addBtn.addEventListener("click", () => {
-      reviews.push({ id: uid(), name: "Nombre del cliente", company: "", review: "Escribe aquí la reseña.", photo: "" });
-      saveReviews();
-      render();
-    });
-
-    const resetBtn = document.createElement("button");
-    resetBtn.type = "button";
-    resetBtn.id = "reviews-editor-reset";
-    resetBtn.textContent = "Restablecer diseño original";
-    resetBtn.addEventListener("click", () => {
-      UI.askConfirm("¿Restablecer las reseñas al diseño original? Se perderán tus cambios.", () => {
-        reviews = cloneDefaults();
-        saveReviews();
+    addBtn.addEventListener("click", async () => {
+      const review = { id: uid(), name: "Nombre del cliente", company: "", review: "Escribe aquí la reseña.", photo: "" };
+      try {
+        await api("POST", review);
+        reviews.push(review);
         render();
-        UI.showToast("Reseñas restablecidas.");
-      });
+        UI.showToast("Reseña agregada.");
+      } catch (e) {
+        UI.showToast("No se pudo agregar la reseña.");
+      }
     });
 
     const actions = document.createElement("div");
     actions.className = "catalog-toolbar";
     actions.appendChild(addBtn);
-    actions.appendChild(resetBtn);
     root.appendChild(actions);
   }
 
@@ -128,11 +101,15 @@
       const file = ev.target.files && ev.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         review.photo = reader.result;
-        saveReviews();
-        render();
-        UI.showToast("Foto actualizada.");
+        try {
+          await api("POST", review);
+          render();
+          UI.showToast("Foto actualizada.");
+        } catch (e) {
+          UI.showToast("No se pudo guardar la foto.");
+        }
       };
       reader.readAsDataURL(file);
     });
@@ -144,18 +121,27 @@
     const top = document.createElement("div");
     top.className = "reviews-editor-row__fields-top";
 
+    async function saveReview() {
+      try {
+        await api("POST", review);
+      } catch (e) {
+        UI.showToast("No se pudo guardar el cambio.");
+      }
+    }
+
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.placeholder = "Nombre";
     nameInput.value = review.name;
-    nameInput.addEventListener("input", () => { review.name = nameInput.value; saveReviews(); });
-    nameInput.addEventListener("blur", render);
+    nameInput.addEventListener("input", () => { review.name = nameInput.value; });
+    nameInput.addEventListener("blur", () => { saveReview(); render(); });
 
     const companyInput = document.createElement("input");
     companyInput.type = "text";
     companyInput.placeholder = "Empresa";
     companyInput.value = review.company;
-    companyInput.addEventListener("input", () => { review.company = companyInput.value; saveReviews(); });
+    companyInput.addEventListener("input", () => { review.company = companyInput.value; });
+    companyInput.addEventListener("blur", saveReview);
 
     top.appendChild(nameInput);
     top.appendChild(companyInput);
@@ -164,7 +150,8 @@
     reviewInput.rows = 3;
     reviewInput.placeholder = "Reseña";
     reviewInput.value = review.review;
-    reviewInput.addEventListener("input", () => { review.review = reviewInput.value; saveReviews(); });
+    reviewInput.addEventListener("input", () => { review.review = reviewInput.value; });
+    reviewInput.addEventListener("blur", saveReview);
 
     fields.appendChild(top);
     fields.appendChild(reviewInput);
@@ -174,11 +161,15 @@
     deleteBtn.className = "reviews-editor-row__delete";
     deleteBtn.textContent = "Eliminar";
     deleteBtn.addEventListener("click", () => {
-      UI.askConfirm(`¿Eliminar la reseña de "${review.name}"?`, () => {
-        reviews = reviews.filter(r => r.id !== review.id);
-        saveReviews();
-        render();
-        UI.showToast("Reseña eliminada.");
+      UI.askConfirm(`¿Eliminar la reseña de "${review.name}"?`, async () => {
+        try {
+          await api("DELETE", { id: review.id });
+          reviews = reviews.filter(r => r.id !== review.id);
+          render();
+          UI.showToast("Reseña eliminada.");
+        } catch (e) {
+          UI.showToast("No se pudo eliminar.");
+        }
       });
     });
 
@@ -188,5 +179,5 @@
     return row;
   }
 
-  render();
+  loadReviews();
 })();

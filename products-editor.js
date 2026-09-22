@@ -1,59 +1,38 @@
 /* ==========================================================================
-   Editor de catálogo (sección "Nuestro Trabajo")
-   Permite al dueño del sitio subir/cambiar imágenes y títulos de los
-   productos sin tocar código. Los datos se guardan en localStorage, por lo
-   que persisten en el navegador usado para editar.
+   Editor de catálogo — panel de administración (admin.html)
+   Lee y guarda en /api/products (base de datos), visible para todos los
+   visitantes del sitio apenas se guarda un cambio.
    ========================================================================== */
 
 (function () {
   "use strict";
 
-  var UI = window.StyloEditorUI;
-  var STORAGE_KEY = "stylo_catalogo_v1";
+  const UI = window.StyloEditorUI;
 
-  var DEFAULT_PRODUCTS = [
-    { id: "p1", title: "Bordado corporativo", image: "assets/products/bordado-corporativo.png" },
-    { id: "p2", title: "Estampado (DTF/serigrafía)", image: "assets/products/estampado-dtf-serigrafia.png" },
-    { id: "p3", title: "Sublimación", image: "assets/products/sublimacion.png" },
-    { id: "p4", title: "Merchandising promocional", image: "assets/products/merchandising-promocional.png" },
-    { id: "p5", title: "Regalos y eventos personalizados", image: "assets/products/regalos-eventos-personalizados.png" },
-    { id: "p6", title: "Merchandising deportivo / fanaticada", image: "assets/products/merchandising-deportivo-fanaticada.png" },
-    { id: "p7", title: "Confección y uniformes corporativos", image: "assets/products/confeccion-uniformes-corporativos.png" }
-  ];
-
-  function cloneDefaults() {
-    return DEFAULT_PRODUCTS.map(function (p) {
-      return { id: p.id, title: p.title, image: p.image };
-    });
-  }
-
-  var grid = document.getElementById("product-grid");
-  var editToggleBtn = document.getElementById("catalog-edit-toggle");
-  var addBtnWrapper = document.getElementById("catalog-add-wrapper");
-  var editBar = document.getElementById("catalog-edit-bar");
+  const grid = document.getElementById("product-grid");
+  const editToggleBtn = document.getElementById("catalog-edit-toggle");
+  const addBtnWrapper = document.getElementById("catalog-add-wrapper");
+  const editBar = document.getElementById("catalog-edit-bar");
 
   if (!grid) return;
 
   var editMode = false;
-  var products = loadProducts();
+  var products = [];
 
-  function loadProducts() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        var parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length) return parsed;
-      }
-    } catch (e) {}
-    return cloneDefaults();
+  async function api(method, body) {
+    const res = await UI.authFetch("/api/products", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if (!res.ok) throw new Error("request failed: " + res.status);
+    return res.json();
   }
 
-  function saveProducts() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-    } catch (e) {
-      UI.showToast("No se pudo guardar (almacenamiento local lleno o bloqueado).");
-    }
+  async function loadProducts() {
+    const res = await fetch("/api/products");
+    products = res.ok ? await res.json() : [];
+    render();
   }
 
   function uid() {
@@ -107,11 +86,15 @@
         var file = ev.target.files && ev.target.files[0];
         if (!file) return;
         var reader = new FileReader();
-        reader.onload = function () {
+        reader.onload = async function () {
           product.image = reader.result;
           img.src = product.image;
-          saveProducts();
-          UI.showToast("Imagen actualizada.");
+          try {
+            await api("POST", { id: product.id, title: product.title, image: product.image });
+            UI.showToast("Imagen actualizada.");
+          } catch (e) {
+            UI.showToast("No se pudo guardar la imagen.");
+          }
         };
         reader.readAsDataURL(file);
       });
@@ -122,11 +105,15 @@
       deleteBtn.className = "product-card__delete-btn";
       deleteBtn.textContent = "Eliminar";
       deleteBtn.addEventListener("click", function () {
-        UI.askConfirm('¿Eliminar "' + product.title + '" del catálogo?', function () {
-          products = products.filter(function (p) { return p.id !== product.id; });
-          saveProducts();
-          render();
-          UI.showToast("Producto eliminado.");
+        UI.askConfirm('¿Eliminar "' + product.title + '" del catálogo?', async function () {
+          try {
+            await api("DELETE", { id: product.id });
+            products = products.filter(function (p) { return p.id !== product.id; });
+            render();
+            UI.showToast("Producto eliminado.");
+          } catch (e) {
+            UI.showToast("No se pudo eliminar.");
+          }
         });
       });
 
@@ -136,11 +123,15 @@
 
       caption.contentEditable = "true";
       caption.classList.add("is-editable");
-      caption.addEventListener("blur", function () {
+      caption.addEventListener("blur", async function () {
         product.title = caption.textContent.trim() || product.title;
         caption.textContent = product.title;
         img.alt = product.title;
-        saveProducts();
+        try {
+          await api("POST", { id: product.id, title: product.title, image: product.image });
+        } catch (e) {
+          UI.showToast("No se pudo guardar el título.");
+        }
       });
       caption.addEventListener("keydown", function (ev) {
         if (ev.key === "Enter") { ev.preventDefault(); caption.blur(); }
@@ -150,11 +141,16 @@
     return card;
   }
 
-  function addProduct() {
-    products.push({ id: uid(), title: "Nuevo producto", image: "assets/products/bordado-corporativo.png" });
-    saveProducts();
-    render();
-    UI.showToast("Producto agregado. Cambia su foto y título.");
+  async function addProduct() {
+    var product = { id: uid(), title: "Nuevo producto", image: "assets/products/bordado-corporativo.png" };
+    try {
+      await api("POST", product);
+      products.push(product);
+      render();
+      UI.showToast("Producto agregado. Cambia su foto y título.");
+    } catch (e) {
+      UI.showToast("No se pudo agregar el producto.");
+    }
   }
 
   function setEditMode(on) {
@@ -182,16 +178,7 @@
   if (addBtn) addBtn.addEventListener("click", addProduct);
 
   var resetBtn = document.getElementById("catalog-reset-btn");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", function () {
-      UI.askConfirm("¿Restablecer el catálogo al diseño original? Se perderán tus cambios.", function () {
-        products = cloneDefaults();
-        saveProducts();
-        render();
-        UI.showToast("Catálogo restablecido.");
-      });
-    });
-  }
+  if (resetBtn) resetBtn.style.display = "none"; // el "original" ahora vive en la base de datos
 
-  render();
+  loadProducts();
 })();
