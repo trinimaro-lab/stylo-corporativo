@@ -917,7 +917,7 @@ body.quote-no-scroll{ overflow:hidden; }
 /* ---------------------------------- Reseñas ---------------------------------- */
 .resenas{ background:var(--reviews-bg); padding-block:80px; overflow:hidden; }
 .resenas__intro{
-  max-width:60%;
+  max-width:70%;
   margin:0 auto 56px;
   text-align:center;
 }
