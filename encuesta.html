@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Cuéntanos tu experiencia — Stylo Corporativo</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body{
+    background:var(--reviews-bg);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .survey-card{
+    width:100%;
+    max-width:520px;
+    background:var(--white);
+    border-radius:20px;
+    padding:40px 32px;
+    box-shadow:0 12px 40px rgba(0,52,90,.14);
+  }
+  .survey-card img{ width:56px; margin:0 auto 20px; }
+  .survey-card h1{
+    color:var(--navy);
+    font-size:24px;
+    text-align:center;
+    margin:0 0 8px;
+  }
+  .survey-card__desc{
+    color:var(--text-gray);
+    font-size:14px;
+    text-align:center;
+    margin:0 0 28px;
+  }
+  .survey-field{ margin-bottom:18px; }
+  .survey-field label{
+    display:block;
+    color:var(--navy);
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .survey-field input[type="text"],
+  .survey-field textarea{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid rgba(0,52,90,.2);
+    border-radius:10px;
+    font-family:var(--font);
+    font-size:14px;
+    color:var(--black);
+  }
+  .survey-field textarea{ resize:vertical; min-height:110px; }
+  .survey-stars{
+    display:flex;
+    gap:6px;
+    font-size:32px;
+    line-height:1;
+  }
+  .survey-stars input{ display:none; }
+  .survey-stars label{
+    cursor:pointer;
+    color:#d7dde2;
+    margin:0;
+    transition:color .15s ease;
+  }
+  .survey-stars label.is-filled{ color:var(--orange); }
+  .survey-submit{
+    width:100%;
+    background:var(--orange);
+    color:var(--white);
+    border-radius:999px;
+    padding:14px;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+  .survey-submit:hover{ background:#e05f00; }
+  .survey-submit:disabled{ background:#c9d3da; color:#7c8894; cursor:default; }
+  .survey-error{
+    color:var(--orange);
+    font-size:12px;
+    margin:-8px 0 16px;
+    display:none;
+  }
+  .survey-error.is-visible{ display:block; }
+  .survey-thanks{ display:none; text-align:center; }
+  .survey-thanks h1{ margin-bottom:12px; }
+  .survey-thanks p{ color:var(--text-gray); font-size:14px; }
+</style>
+</head>
+<body>
+
+<div class="survey-card">
+  <img src="assets/logo-white.png" alt="Stylo Corporativo" style="filter:invert(1) brightness(0.2);">
+
+  <div id="survey-form-wrap">
+    <h1>Cuéntanos tu experiencia</h1>
+    <p class="survey-card__desc">Tu opinión nos ayuda a mejorar. Solo toma un minuto.</p>
+
+    <form id="survey-form">
+      <div class="survey-field">
+        <label for="survey-name">Nombre*</label>
+        <input type="text" id="survey-name" name="name" required maxlength="120">
+      </div>
+
+      <div class="survey-field">
+        <label for="survey-company">Empresa</label>
+        <input type="text" id="survey-company" name="company" maxlength="120">
+      </div>
+
+      <div class="survey-field">
+        <label>Calificación*</label>
+        <div class="survey-stars" id="survey-stars">
+          <input type="radio" name="rating" value="1" id="star-1"><label for="star-1" data-value="1">★</label>
+          <input type="radio" name="rating" value="2" id="star-2"><label for="star-2" data-value="2">★</label>
+          <input type="radio" name="rating" value="3" id="star-3"><label for="star-3" data-value="3">★</label>
+          <input type="radio" name="rating" value="4" id="star-4"><label for="star-4" data-value="4">★</label>
+          <input type="radio" name="rating" value="5" id="star-5"><label for="star-5" data-value="5">★</label>
+        </div>
+      </div>
+
+      <div class="survey-field">
+        <label for="survey-review">Tu reseña*</label>
+        <textarea id="survey-review" name="review" required maxlength="2000" placeholder="Cuéntanos cómo fue tu experiencia con Stylo Corporativo..."></textarea>
+      </div>
+
+      <p class="survey-error" id="survey-error">Por favor completa tu nombre, una calificación y tu reseña.</p>
+
+      <button type="submit" class="survey-submit" id="survey-submit">Enviar reseña</button>
+    </form>
+  </div>
+
+  <div class="survey-thanks" id="survey-thanks">
+    <h1>¡Gracias por tu opinión!</h1>
+    <p>Recibimos tu reseña. La revisaremos y la publicaremos pronto en nuestro sitio.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var starsWrap = document.getElementById("survey-stars");
+  var labels = Array.prototype.slice.call(starsWrap.querySelectorAll("label"));
+
+  function paintStars(value) {
+    labels.forEach(function (label) {
+      var starValue = Number(label.dataset.value);
+      label.classList.toggle("is-filled", starValue <= value);
+    });
+  }
+
+  labels.forEach(function (label) {
+    label.addEventListener("mouseenter", function () { paintStars(Number(label.dataset.value)); });
+    label.addEventListener("click", function () { paintStars(Number(label.dataset.value)); });
+  });
+  starsWrap.addEventListener("mouseleave", function () {
+    var checked = starsWrap.querySelector("input:checked");
+    paintStars(checked ? Number(checked.value) : 0);
+  });
+
+  var form = document.getElementById("survey-form");
+  var errorEl = document.getElementById("survey-error");
+  var submitBtn = document.getElementById("survey-submit");
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+
+    var name = document.getElementById("survey-name").value.trim();
+    var company = document.getElementById("survey-company").value.trim();
+    var review = document.getElementById("survey-review").value.trim();
+    var ratingInput = starsWrap.querySelector("input:checked");
+    var rating = ratingInput ? Number(ratingInput.value) : 0;
+
+    if (!name || !review || !rating) {
+      errorEl.classList.add("is-visible");
+      return;
+    }
+    errorEl.classList.remove("is-visible");
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Enviando…";
+
+    fetch("/api/survey", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name, company: company, review: review, rating: rating })
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error("request failed");
+        document.getElementById("survey-form-wrap").style.display = "none";
+        document.getElementById("survey-thanks").style.display = "block";
+      })
+      .catch(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Enviar reseña";
+        errorEl.textContent = "No pudimos enviar tu reseña. Intenta de nuevo en un momento.";
+        errorEl.classList.add("is-visible");
+      });
+  });
+})();
+</script>
+</body>
+</html>

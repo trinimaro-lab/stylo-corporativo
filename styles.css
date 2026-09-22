@@ -643,7 +643,7 @@ body.quote-no-scroll{ overflow:hidden; }
 }
 .reviews-editor-row__photo:hover .reviews-editor-row__photo-btn{ opacity:1; }
 .reviews-editor-row__fields{ display:grid; gap:10px; }
-.reviews-editor-row__fields-top{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.reviews-editor-row__fields-top{ display:grid; grid-template-columns:1fr 1fr 150px; gap:10px; }
 .reviews-editor-row__fields input,
 .reviews-editor-row__fields textarea,
 .reviews-editor-row__fields select{
@@ -662,6 +662,20 @@ body.quote-no-scroll{ overflow:hidden; }
   height:80px;
   border-radius:10px;
 }
+.reviews-editor-row__badges{ display:flex; align-items:center; gap:8px; }
+.reviews-editor-row__badge{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  border-radius:999px;
+  padding:3px 10px;
+}
+.reviews-editor-row__badge.is-pending{ background:#fff1e2; color:var(--orange); }
+.reviews-editor-row__badge.is-approved{ background:#e4f6ea; color:#1f8a4c; }
+.reviews-editor-row__date{ font-size:11px; color:var(--text-gray); }
+.reviews-editor-row.is-pending{ border-color:var(--orange); background:#fffaf4; }
+.reviews-editor-row__actions{ display:flex; flex-direction:column; gap:8px; }
 .reviews-editor-row__delete{
   background:var(--orange);
   color:var(--white);
@@ -671,6 +685,26 @@ body.quote-no-scroll{ overflow:hidden; }
   font-weight:600;
 }
 .reviews-editor-row__delete:hover{ background:#e05f00; }
+.reviews-editor-row__approve{
+  background:#1f8a4c;
+  color:var(--white);
+  border-radius:999px;
+  padding:8px 16px;
+  font-size:11px;
+  font-weight:600;
+}
+.reviews-editor-row__approve:hover{ background:#166b3a; }
+.reviews-filter{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.reviews-filter__btn{
+  background:var(--white);
+  border:1px solid rgba(0,52,90,.25);
+  color:var(--navy);
+  border-radius:999px;
+  padding:7px 16px;
+  font-size:12px;
+  font-weight:600;
+}
+.reviews-filter__btn.is-active{ background:var(--navy); color:var(--white); border-color:var(--navy); }
 @media (max-width: 560px){
   .reviews-editor-row{ grid-template-columns:1fr; }
   .reviews-editor-row__fields-top{ grid-template-columns:1fr; }

@@ -1,11 +1,12 @@
 /* ==========================================================================
    Editor de reseñas — panel de administración (admin.html)
-   Lee y guarda en /api/reviews (base de datos), visible para todos los
-   visitantes del sitio apenas se guarda un cambio.
+   Lee y guarda en /api/reviews (base de datos). Incluye las reseñas que
+   llegan solas desde la encuesta pública (encuesta.html) con estado
+   "pending": no se ven en el sitio público hasta que se aprueban aquí.
 
-   Los campos (nombre, empresa, reseña, foto) se guardan en memoria mientras
-   se editan, y se envían todos juntos al hacer clic en "Guardar cambios".
-   Agregar y eliminar siguen siendo inmediatos.
+   Los campos (nombre, empresa, calificación, reseña, foto) se guardan en
+   memoria mientras se editan, y se envían todos juntos al hacer clic en
+   "Guardar cambios". Agregar, eliminar y aprobar siguen siendo inmediatos.
 
    Cómo usarlo: en una página con:
      <div id="reviews-editor-root"></div>
@@ -24,9 +25,10 @@
 
   let reviews = [];
   let dirtyIds = new Set();
+  let filter = "all";
 
-  async function api(method, body) {
-    const res = await UI.authFetch("/api/reviews", {
+  async function api(method, url, body) {
+    const res = await UI.authFetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: body ? JSON.stringify(body) : undefined
@@ -47,7 +49,7 @@
   }
 
   async function loadReviews() {
-    const res = await fetch("/api/reviews");
+    const res = await UI.authFetch("/api/reviews");
     reviews = res.ok ? await res.json() : [];
     render();
   }
@@ -60,17 +62,76 @@
     return (name || "?").trim().charAt(0).toUpperCase();
   }
 
+  function formatDate(value) {
+    if (!value) return "";
+    try {
+      return new Date(value).toLocaleDateString("es-CL", { day: "2-digit", month: "short", year: "numeric" });
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function starsText(rating) {
+    const n = Math.min(5, Math.max(1, Number(rating) || 5));
+    return "★".repeat(n) + "☆".repeat(5 - n);
+  }
+
   function updateSaveBtnState() {
     const saveBtn = document.getElementById("reviews-save-btn");
     if (saveBtn) saveBtn.disabled = dirtyIds.size === 0;
   }
 
+  function markDirty(id) {
+    dirtyIds.add(id);
+    updateSaveBtnState();
+  }
+
+  function visibleReviews() {
+    if (filter === "pending") return reviews.filter(r => r.status === "pending");
+    if (filter === "approved") return reviews.filter(r => r.status !== "pending");
+    return reviews;
+  }
+
+  function buildFilterBar() {
+    const bar = document.createElement("div");
+    bar.className = "reviews-filter";
+
+    const pendingCount = reviews.filter(r => r.status === "pending").length;
+    const approvedCount = reviews.filter(r => r.status !== "pending").length;
+
+    const options = [
+      { value: "all", label: "Todas (" + reviews.length + ")" },
+      { value: "pending", label: "Pendientes (" + pendingCount + ")" },
+      { value: "approved", label: "Publicadas (" + approvedCount + ")" }
+    ];
+
+    options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "reviews-filter__btn" + (filter === opt.value ? " is-active" : "");
+      btn.textContent = opt.label;
+      btn.addEventListener("click", () => { filter = opt.value; render(); });
+      bar.appendChild(btn);
+    });
+
+    return bar;
+  }
+
   function render() {
     root.innerHTML = "";
 
+    root.appendChild(buildFilterBar());
+
     const list = document.createElement("div");
     list.className = "reviews-editor-list";
-    reviews.forEach(review => list.appendChild(buildRow(review)));
+    visibleReviews().forEach(review => list.appendChild(buildRow(review)));
+    if (visibleReviews().length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "admin-hint";
+      empty.style.margin = "8px 0 0";
+      empty.textContent = "No hay reseñas en este filtro.";
+      list.appendChild(empty);
+    }
     root.appendChild(list);
 
     const actions = document.createElement("div");
@@ -81,9 +142,9 @@
     addBtn.className = "catalog-add-btn";
     addBtn.textContent = "+ Agregar reseña";
     addBtn.addEventListener("click", async () => {
-      const review = { id: uid(), name: "Nombre del cliente", company: "", review: "Escribe aquí la reseña.", photo: "" };
+      const review = { id: uid(), name: "Nombre del cliente", company: "", review: "Escribe aquí la reseña.", photo: "", rating: 5, status: "approved" };
       try {
-        await api("POST", review);
+        await api("POST", "/api/reviews", review);
         reviews.push(review);
         render();
         UI.showToast("Reseña agregada.");
@@ -110,7 +171,7 @@
     const pending = reviews.filter(r => dirtyIds.has(r.id));
     try {
       for (const review of pending) {
-        await api("POST", review);
+        await api("POST", "/api/reviews", review);
         dirtyIds.delete(review.id);
       }
       updateSaveBtnState();
@@ -124,6 +185,7 @@
   function buildRow(review) {
     const row = document.createElement("div");
     row.className = "reviews-editor-row";
+    if (review.status === "pending") row.classList.add("is-pending");
 
     const photoWrap = document.createElement("label");
     photoWrap.className = "reviews-editor-row__photo";
@@ -150,7 +212,7 @@
       const reader = new FileReader();
       reader.onload = () => {
         review.photo = reader.result;
-        dirtyIds.add(review.id);
+        markDirty(review.id);
         render();
       };
       reader.readAsDataURL(file);
@@ -160,38 +222,81 @@
     const fields = document.createElement("div");
     fields.className = "reviews-editor-row__fields";
 
+    const badges = document.createElement("div");
+    badges.className = "reviews-editor-row__badges";
+    const statusBadge = document.createElement("span");
+    statusBadge.className = "reviews-editor-row__badge" + (review.status === "pending" ? " is-pending" : " is-approved");
+    statusBadge.textContent = review.status === "pending" ? "Pendiente" : "Publicada";
+    badges.appendChild(statusBadge);
+    if (review.submitted_at) {
+      const dateBadge = document.createElement("span");
+      dateBadge.className = "reviews-editor-row__date";
+      dateBadge.textContent = formatDate(review.submitted_at);
+      badges.appendChild(dateBadge);
+    }
+    fields.appendChild(badges);
+
     const top = document.createElement("div");
     top.className = "reviews-editor-row__fields-top";
-
-    function markDirty() {
-      dirtyIds.add(review.id);
-      updateSaveBtnState();
-    }
 
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.placeholder = "Nombre";
     nameInput.value = review.name;
-    nameInput.addEventListener("input", () => { review.name = nameInput.value; markDirty(); });
+    nameInput.addEventListener("input", () => { review.name = nameInput.value; markDirty(review.id); });
     nameInput.addEventListener("blur", () => { render(); });
 
     const companyInput = document.createElement("input");
     companyInput.type = "text";
     companyInput.placeholder = "Empresa";
     companyInput.value = review.company;
-    companyInput.addEventListener("input", () => { review.company = companyInput.value; markDirty(); });
+    companyInput.addEventListener("input", () => { review.company = companyInput.value; markDirty(review.id); });
+
+    const ratingSelect = document.createElement("select");
+    for (let n = 5; n >= 1; n--) {
+      const option = document.createElement("option");
+      option.value = String(n);
+      option.textContent = starsText(n) + " (" + n + ")";
+      if (Number(review.rating || 5) === n) option.selected = true;
+      ratingSelect.appendChild(option);
+    }
+    ratingSelect.addEventListener("change", () => { review.rating = Number(ratingSelect.value); markDirty(review.id); });
 
     top.appendChild(nameInput);
     top.appendChild(companyInput);
+    top.appendChild(ratingSelect);
 
     const reviewInput = document.createElement("textarea");
     reviewInput.rows = 3;
     reviewInput.placeholder = "Reseña";
     reviewInput.value = review.review;
-    reviewInput.addEventListener("input", () => { review.review = reviewInput.value; markDirty(); });
+    reviewInput.addEventListener("input", () => { review.review = reviewInput.value; markDirty(review.id); });
 
     fields.appendChild(top);
     fields.appendChild(reviewInput);
+
+    const rowActions = document.createElement("div");
+    rowActions.className = "reviews-editor-row__actions";
+
+    if (review.status === "pending") {
+      const approveBtn = document.createElement("button");
+      approveBtn.type = "button";
+      approveBtn.className = "reviews-editor-row__approve";
+      approveBtn.textContent = "Aprobar";
+      approveBtn.addEventListener("click", async () => {
+        review.status = "approved";
+        try {
+          await api("POST", "/api/reviews", review);
+          dirtyIds.delete(review.id);
+          render();
+          UI.showToast("Reseña publicada.");
+        } catch (e) {
+          review.status = "pending";
+          notifyFailure("No se pudo aprobar la reseña.", e);
+        }
+      });
+      rowActions.appendChild(approveBtn);
+    }
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
@@ -200,7 +305,7 @@
     deleteBtn.addEventListener("click", () => {
       UI.askConfirm(`¿Eliminar la reseña de "${review.name}"?`, async () => {
         try {
-          await api("DELETE", { id: review.id });
+          await api("DELETE", "/api/reviews", { id: review.id });
           reviews = reviews.filter(r => r.id !== review.id);
           dirtyIds.delete(review.id);
           render();
@@ -210,10 +315,11 @@
         }
       });
     });
+    rowActions.appendChild(deleteBtn);
 
     row.appendChild(photoWrap);
     row.appendChild(fields);
-    row.appendChild(deleteBtn);
+    row.appendChild(rowActions);
     return row;
   }
 
