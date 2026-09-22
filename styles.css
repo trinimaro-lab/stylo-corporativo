@@ -70,6 +70,8 @@ ul{ margin:0; padding:0; list-style:none; }
 }
 .btn-lime{ background:var(--lime); color:var(--white); }
 .btn-lime:hover{ background:var(--cyan); }
+.btn-orange{ background:var(--orange); color:var(--white); }
+.btn-orange:hover{ background:#e05f00; }
 
 /* ---------------------------------- Header / Hero ---------------------------------- */
 .hero{
@@ -1117,8 +1119,8 @@ body.quote-no-scroll{ overflow:hidden; }
   margin-top:20px;
 }
 .btn-submit{
-  background:var(--lime);
-  color:var(--blue);
+  background:var(--orange);
+  color:var(--white);
   border-radius:12px;
   padding:14px 36px;
   font-weight:700;
@@ -1126,7 +1128,7 @@ body.quote-no-scroll{ overflow:hidden; }
   letter-spacing:.0375rem;
   text-transform:uppercase;
 }
-.btn-submit:hover{ background:var(--cyan); color:var(--white); }
+.btn-submit:hover{ background:#e05f00; }
 
 /* ---------------------------------- Footer ---------------------------------- */
 .footer{
