@@ -1059,7 +1059,7 @@ body.quote-no-scroll{ overflow:hidden; }
   position:relative;
   display:flex;
   gap:16px;
-  padding-block:120px;
+  padding-block:90px;
   flex-wrap:wrap;
 }
 .contacto__col{ flex:1 1 420px; min-width:0; }
@@ -1079,14 +1079,14 @@ body.quote-no-scroll{ overflow:hidden; }
 .form-panel{
   background:var(--white);
   border-radius:16px;
-  padding:40px 36px;
+  padding:26px 28px;
   box-shadow:0 20px 45px rgba(0,0,0,.25);
 }
 .form-row{
   display:flex;
   gap:12px;
   flex-wrap:wrap;
-  margin-bottom:20px;
+  margin-bottom:12px;
 }
 .form-row:last-of-type{ margin-bottom:0; }
 .form-field{
@@ -1097,18 +1097,18 @@ body.quote-no-scroll{ overflow:hidden; }
   width:100%;
   border:1px solid rgba(0,52,90,.15);
   border-radius:8px;
-  padding:13px;
+  padding:10px 13px;
   font-family:var(--font);
   font-size:14px;
   color:var(--black);
   outline:0;
   background:var(--white);
 }
-.form-field textarea{ min-height:114px; resize:vertical; }
+.form-field textarea{ min-height:64px; resize:vertical; }
 .form-field input::placeholder,
 .form-field textarea::placeholder{ color:var(--placeholder-gray); }
 
-.form-actions-top{ margin:20px 0; }
+.form-actions-top{ margin:12px 0; }
 .form-attach{
   display:inline-flex;
   align-items:center;
@@ -1126,7 +1126,7 @@ body.quote-no-scroll{ overflow:hidden; }
 .form-submit-row{
   display:flex;
   justify-content:flex-end;
-  margin-top:20px;
+  margin-top:12px;
 }
 .btn-submit{
   background:var(--orange);
