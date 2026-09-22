@@ -1143,11 +1143,6 @@ body.quote-no-scroll{ overflow:hidden; }
   padding-bottom:40px;
 }
 .footer__brand{ flex:1 1 300px; }
-.footer__tagline{
-  color:var(--cyan);
-  font-size:16px;
-  margin:0 0 20px;
-}
 .footer__logo{ width:200px; height:auto; }
 .footer__cols{
   flex:3 1 700px;
@@ -1162,7 +1157,7 @@ body.quote-no-scroll{ overflow:hidden; }
 }
 .footer__col ul li + li{ margin-top:12px; }
 .footer__col a{
-  color:var(--cyan);
+  color:var(--white);
   font-size:14px;
 }
 .footer__social{
