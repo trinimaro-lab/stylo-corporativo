@@ -1045,11 +1045,10 @@ body.quote-no-scroll{ overflow:hidden; }
   position:relative;
   color:var(--white);
   overflow:hidden;
-}
-.contacto__bg{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  object-fit:cover;
+  background-image:url('assets/contact-bg.png');
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
 }
 .contacto__scrim{
   position:absolute; inset:0;
@@ -1145,15 +1144,10 @@ body.quote-no-scroll{ overflow:hidden; }
   position:relative;
   color:var(--white);
   padding-top:56px;
-}
-.footer__bg-clip{
-  position:absolute; inset:0;
-  z-index:0;
-}
-.footer__bg{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  object-fit:cover;
+  background-image:url('assets/contact-bg.png');
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
 }
 .footer__scrim{
   position:absolute; inset:0;
