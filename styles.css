@@ -1067,9 +1067,10 @@ body.quote-no-scroll{ overflow:hidden; }
 }
 
 .form-panel{
-  background:var(--blue);
+  background:var(--white);
   border-radius:16px;
   padding:40px 36px;
+  box-shadow:0 20px 45px rgba(0,0,0,.25);
 }
 .form-row{
   display:flex;
@@ -1084,9 +1085,8 @@ body.quote-no-scroll{ overflow:hidden; }
 .form-field input,
 .form-field textarea{
   width:100%;
-  border:1px solid var(--white);
+  border:1px solid rgba(0,52,90,.15);
   border-radius:8px;
-  box-shadow:0 0 16px 0 rgba(41,41,41,.4);
   padding:13px;
   font-family:var(--font);
   font-size:16px;
@@ -1103,7 +1103,7 @@ body.quote-no-scroll{ overflow:hidden; }
   display:inline-flex;
   align-items:center;
   gap:8px;
-  background:var(--cyan);
+  background:var(--footer-bg);
   color:var(--white);
   border-radius:8px;
   padding:10px 24px;
