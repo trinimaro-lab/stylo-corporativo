@@ -585,38 +585,78 @@ body.quote-no-scroll{ overflow:hidden; }
   margin:32px 0 0;
 }
 
-/* ---------------------------------- Editor de reseñas ---------------------------------- */
-.reviews-list{
+/* ---------------------------------- Editor de reseñas (panel dormido, sin enlazar) ---------------------------------- */
+.reviews-editor-list{
   display:flex;
   flex-direction:column;
-  gap:24px;
+  gap:16px;
 }
-.review-card{ position:relative; }
-.review-card.is-editing{
-  outline:2px dashed var(--cyan);
-  outline-offset:4px;
+.reviews-editor-row{
+  display:grid;
+  grid-template-columns:88px 1fr auto;
+  gap:16px;
+  align-items:start;
+  padding:16px;
+  border:1px solid rgba(0,52,90,.14);
+  border-radius:12px;
+  background:var(--white);
 }
-.review-card__quote.is-editable,
-.review-card__name.is-editable,
-.review-card__place.is-editable{
-  outline:2px dashed var(--cyan);
-  outline-offset:2px;
-  border-radius:4px;
-  cursor:text;
+.reviews-editor-row__photo{
+  position:relative;
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  overflow:hidden;
+  background:var(--navy);
+  color:var(--white);
+  display:grid;
+  place-items:center;
+  font-weight:700;
+  font-size:24px;
 }
-.review-card__stars img.is-off{ opacity:.25; }
-.review-card__stars img.is-clickable{ cursor:pointer; }
-.review-card__delete-btn{
-  display:inline-flex;
-  margin-top:16px;
+.reviews-editor-row__photo img{ width:100%; height:100%; object-fit:cover; }
+.reviews-editor-row__photo-btn{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding-bottom:4px;
+  background:rgba(0,20,36,.55);
+  color:var(--white);
+  font-size:11px;
+  font-weight:600;
+  opacity:0;
+  cursor:pointer;
+  transition:opacity .15s ease;
+}
+.reviews-editor-row__photo:hover .reviews-editor-row__photo-btn{ opacity:1; }
+.reviews-editor-row__fields{ display:grid; gap:10px; }
+.reviews-editor-row__fields-top{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.reviews-editor-row__fields input,
+.reviews-editor-row__fields textarea{
+  width:100%;
+  padding:9px 11px;
+  border:1px solid rgba(0,52,90,.2);
+  border-radius:8px;
+  font-family:var(--font);
+  font-size:14px;
+  color:var(--black);
+}
+.reviews-editor-row__fields textarea{ resize:vertical; }
+.reviews-editor-row__delete{
   background:var(--orange);
   color:var(--white);
   border-radius:999px;
-  padding:8px 18px;
+  padding:8px 16px;
   font-size:13px;
   font-weight:600;
 }
-.review-card__delete-btn:hover{ background:#e05f00; }
+.reviews-editor-row__delete:hover{ background:#e05f00; }
+@media (max-width: 560px){
+  .reviews-editor-row{ grid-template-columns:1fr; }
+  .reviews-editor-row__fields-top{ grid-template-columns:1fr; }
+}
 
 .editor-modal-root{
   display:none;
@@ -876,15 +916,12 @@ body.quote-no-scroll{ overflow:hidden; }
 .acordeon[open] .acordeon__chevron{ transform:rotate(180deg); }
 
 /* ---------------------------------- Reseñas ---------------------------------- */
-.resenas{ background:var(--reviews-bg); padding-block:48px; }
-.resenas__grid{
-  display:flex;
-  gap:80px;
-  align-items:center;
-  padding-block:60px;
-  flex-wrap:wrap;
+.resenas{ background:var(--reviews-bg); padding-block:80px; overflow:hidden; }
+.resenas__intro{
+  max-width:60%;
+  margin:0 auto 56px;
+  text-align:center;
 }
-.resenas__col{ flex:1 1 420px; min-width:0; }
 .resenas__kicker{
   font-weight:300;
   font-size:30px;
@@ -902,43 +939,95 @@ body.quote-no-scroll{ overflow:hidden; }
   font-size:18px;
   line-height:1.55;
   color:var(--text-gray);
-  margin:0 0 40px;
-}
-.review-card{
-  background:var(--white);
-  border-radius:12px;
-  padding:40px 48px;
-  box-shadow:0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1);
-  max-width:640px;
-}
-.review-card__quote{
-  font-weight:500;
-  font-size:18px;
-  line-height:2;
-  color:var(--black);
   margin:0 0 32px;
 }
-.review-card__footer{
+@media (max-width: 900px){
+  .resenas__intro{ max-width:100%; }
+}
+
+/* Carrusel (marquee) */
+.marquee{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+}
+.marquee__fade{
+  position:absolute;
+  top:0; bottom:0;
+  width:min(160px, 12vw);
+  z-index:2;
+  pointer-events:none;
+}
+.marquee__fade--left{ left:0; background:linear-gradient(to right, var(--reviews-bg), transparent); }
+.marquee__fade--right{ right:0; background:linear-gradient(to left, var(--reviews-bg), transparent); }
+.marquee__track{
+  display:flex;
+  width:max-content;
+  animation:marquee-scroll 32s linear infinite;
+}
+.marquee__track.is-paused{ animation-play-state:paused; }
+.marquee--single .marquee__track{ animation-duration:16s; }
+@keyframes marquee-scroll{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce){
+  .marquee__track{ animation:none; }
+}
+
+.testimonial-card{
+  flex:0 0 auto;
+  width:min(380px, 82vw);
+  margin:0 16px;
+  padding:28px;
+  background:var(--white);
+  border-radius:16px;
+  box-shadow:0 4px 6px -4px rgba(0,0,0,.1), 0 10px 15px -3px rgba(0,0,0,.1);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.testimonial-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 25px -5px rgba(0,0,0,.12), 0 10px 10px -5px rgba(0,0,0,.08);
+}
+.testimonial-card__head{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  flex-wrap:wrap;
+  gap:14px;
+  margin-bottom:18px;
 }
-.review-card__name{
+.testimonial-card__avatar{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  object-fit:cover;
+  flex:none;
+}
+.testimonial-card__avatar--initials{
+  display:grid;
+  place-items:center;
+  background:var(--navy);
+  color:var(--white);
   font-weight:700;
   font-size:18px;
-  color:var(--name-blue);
-  margin:0 0 4px;
 }
-.review-card__place{
-  font-weight:500;
+.testimonial-card__name{
+  font-weight:700;
   font-size:16px;
-  color:var(--cyan);
+  color:var(--black);
   margin:0;
 }
-.review-card__stars{ display:flex; gap:4px; }
-.review-card__stars img{ width:18px; height:16px; }
+.testimonial-card__company{
+  font-size:13px;
+  color:var(--cyan);
+  font-weight:600;
+  margin:2px 0 0;
+}
+.testimonial-card__quote{
+  font-size:14px;
+  line-height:1.65;
+  color:var(--text-gray);
+  margin:0;
+}
 
 /* ---------------------------------- Contacto ---------------------------------- */
 .contacto{

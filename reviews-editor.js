@@ -1,51 +1,51 @@
 /* ==========================================================================
-   Editor de reseñas (sección "Lo que Dicen Nuestros Clientes")
-   Permite al dueño del sitio agregar, editar y eliminar testimonios de
-   clientes sin tocar código. Los datos se guardan en localStorage.
+   Editor de reseñas — panel de administración (NO enlazado a index.html).
+   Guarda en el mismo localStorage que lee reviews-marquee.js
+   ("stylo_resenas_v2"), con foto, nombre, reseña y empresa por cliente.
+
+   Cómo usarlo: crea una página aparte (o una sección del futuro panel de
+   administración) con:
+     <div id="reviews-editor-root"></div>
+     <script src="editor-ui.js"></script>
+     <script src="reviews-editor.js"></script>
+   y este script arma ahí la lista editable.
    ========================================================================== */
 
 (function () {
   "use strict";
 
-  var UI = window.StyloEditorUI;
-  var STORAGE_KEY = "stylo_resenas_v1";
+  const UI = window.StyloEditorUI;
+  const STORAGE_KEY = "stylo_resenas_v2";
 
-  var DEFAULT_REVIEWS = [
+  const DEFAULT_REVIEWS = [
     {
       id: "r1",
-      quote: "El trabajo de Stylo Corporativo me pareció realmente excelente. Desataco su atención amable y personalizada, y la calidad de las poleras y gorros. Un muy buen trabajo. La recomiendo 100%.",
       name: "Revivir",
-      place: "Santiago, Chile",
-      stars: 5
+      company: "",
+      review: "El trabajo de Stylo Corporativo me pareció realmente excelente. Desataco su atención amable y personalizada, y la calidad de las poleras y gorros. Un muy buen trabajo. La recomiendo 100%.",
+      photo: ""
     }
   ];
 
+  const root = document.getElementById("reviews-editor-root");
+  if (!root) return;
+
   function cloneDefaults() {
-    return DEFAULT_REVIEWS.map(function (r) {
-      return { id: r.id, quote: r.quote, name: r.name, place: r.place, stars: r.stars };
-    });
+    return DEFAULT_REVIEWS.map(r => ({ id: r.id, name: r.name, company: r.company, review: r.review, photo: r.photo }));
   }
-
-  var list = document.getElementById("reviews-list");
-  var editToggleBtn = document.getElementById("reviews-edit-toggle");
-  var addBtnWrapper = document.getElementById("reviews-add-wrapper");
-  var editBar = document.getElementById("reviews-edit-bar");
-
-  if (!list) return;
-
-  var editMode = false;
-  var reviews = loadReviews();
 
   function loadReviews() {
     try {
-      var raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        var parsed = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length) return parsed;
       }
     } catch (e) {}
     return cloneDefaults();
   }
+
+  let reviews = loadReviews();
 
   function saveReviews() {
     try {
@@ -59,165 +59,133 @@
     return "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   }
 
-  function starsMarkup(count, editable) {
-    var wrap = document.createElement("div");
-    wrap.className = "review-card__stars";
-    for (var i = 1; i <= 5; i++) {
-      var star = document.createElement("img");
-      star.src = "assets/icons/star.svg";
-      star.alt = "";
-      star.className = i <= count ? "" : "is-off";
-      if (editable) {
-        star.classList.add("is-clickable");
-        (function (value) {
-          star.addEventListener("click", function () {
-            wrap.dataset.value = value;
-            wrap.querySelectorAll("img").forEach(function (el, idx) {
-              el.classList.toggle("is-off", idx >= value);
-            });
-          });
-        })(i);
-      }
-      wrap.appendChild(star);
-    }
-    wrap.dataset.value = count;
-    return wrap;
+  function initials(name) {
+    return (name || "?").trim().charAt(0).toUpperCase();
   }
 
   function render() {
-    list.innerHTML = "";
-    reviews.forEach(function (review) {
-      list.appendChild(buildCard(review));
+    root.innerHTML = "";
+
+    const list = document.createElement("div");
+    list.className = "reviews-editor-list";
+    reviews.forEach(review => list.appendChild(buildRow(review)));
+    root.appendChild(list);
+
+    const addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.className = "catalog-add-btn";
+    addBtn.textContent = "+ Agregar reseña";
+    addBtn.addEventListener("click", () => {
+      reviews.push({ id: uid(), name: "Nombre del cliente", company: "", review: "Escribe aquí la reseña.", photo: "" });
+      saveReviews();
+      render();
     });
-    if (addBtnWrapper) addBtnWrapper.style.display = editMode ? "flex" : "none";
-  }
 
-  function buildCard(review) {
-    var card = document.createElement("div");
-    card.className = "review-card";
-    card.dataset.id = review.id;
-
-    var quote = document.createElement("p");
-    quote.className = "review-card__quote";
-    quote.textContent = review.quote;
-
-    var footer = document.createElement("div");
-    footer.className = "review-card__footer";
-
-    var who = document.createElement("div");
-    var name = document.createElement("p");
-    name.className = "review-card__name";
-    name.textContent = review.name;
-    var place = document.createElement("p");
-    place.className = "review-card__place";
-    place.textContent = review.place;
-    who.appendChild(name);
-    who.appendChild(place);
-
-    var stars = starsMarkup(review.stars, editMode);
-
-    footer.appendChild(who);
-    footer.appendChild(stars);
-
-    card.appendChild(quote);
-    card.appendChild(footer);
-
-    if (editMode) {
-      card.classList.add("is-editing");
-
-      quote.contentEditable = "true";
-      quote.classList.add("is-editable");
-      quote.addEventListener("blur", function () {
-        review.quote = quote.textContent.trim() || review.quote;
-        quote.textContent = review.quote;
-        saveReviews();
-      });
-
-      name.contentEditable = "true";
-      name.classList.add("is-editable");
-      name.addEventListener("blur", function () {
-        review.name = name.textContent.trim() || review.name;
-        name.textContent = review.name;
-        saveReviews();
-      });
-
-      place.contentEditable = "true";
-      place.classList.add("is-editable");
-      place.addEventListener("blur", function () {
-        review.place = place.textContent.trim() || review.place;
-        place.textContent = place.textContent.trim() || review.place;
-        saveReviews();
-      });
-
-      stars.addEventListener("click", function () {
-        review.stars = parseInt(stars.dataset.value, 10);
-        saveReviews();
-      });
-
-      var deleteBtn = document.createElement("button");
-      deleteBtn.type = "button";
-      deleteBtn.className = "review-card__delete-btn";
-      deleteBtn.textContent = "Eliminar reseña";
-      deleteBtn.addEventListener("click", function () {
-        UI.askConfirm('¿Eliminar la reseña de "' + review.name + '"?', function () {
-          reviews = reviews.filter(function (r) { return r.id !== review.id; });
-          saveReviews();
-          render();
-          UI.showToast("Reseña eliminada.");
-        });
-      });
-      card.appendChild(deleteBtn);
-    }
-
-    return card;
-  }
-
-  function addReview() {
-    reviews.push({
-      id: uid(),
-      quote: "Escribe aquí la nueva reseña del cliente.",
-      name: "Nombre del cliente",
-      place: "Ciudad, país",
-      stars: 5
-    });
-    saveReviews();
-    render();
-    UI.showToast("Reseña agregada. Edita su contenido.");
-  }
-
-  function setEditMode(on) {
-    editMode = on;
-    if (editBar) editBar.style.display = editMode ? "flex" : "none";
-    if (editToggleBtn) {
-      editToggleBtn.textContent = editMode ? "Salir de edición" : "Editar reseñas";
-    }
-    render();
-  }
-
-  function toggleEdit() {
-    if (editMode) { setEditMode(false); return; }
-    UI.unlockAndRun(
-      "Editar reseñas",
-      "Ingresa la clave de edición para agregar o cambiar testimonios.",
-      function () { setEditMode(true); }
-    );
-  }
-
-  if (editToggleBtn) editToggleBtn.addEventListener("click", toggleEdit);
-
-  var addBtn = document.getElementById("reviews-add-btn");
-  if (addBtn) addBtn.addEventListener("click", addReview);
-
-  var resetBtn = document.getElementById("reviews-reset-btn");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", function () {
-      UI.askConfirm("¿Restablecer las reseñas al diseño original? Se perderán tus cambios.", function () {
+    const resetBtn = document.createElement("button");
+    resetBtn.type = "button";
+    resetBtn.id = "reviews-editor-reset";
+    resetBtn.textContent = "Restablecer diseño original";
+    resetBtn.addEventListener("click", () => {
+      UI.askConfirm("¿Restablecer las reseñas al diseño original? Se perderán tus cambios.", () => {
         reviews = cloneDefaults();
         saveReviews();
         render();
         UI.showToast("Reseñas restablecidas.");
       });
     });
+
+    const actions = document.createElement("div");
+    actions.className = "catalog-toolbar";
+    actions.appendChild(addBtn);
+    actions.appendChild(resetBtn);
+    root.appendChild(actions);
+  }
+
+  function buildRow(review) {
+    const row = document.createElement("div");
+    row.className = "reviews-editor-row";
+
+    const photoWrap = document.createElement("label");
+    photoWrap.className = "reviews-editor-row__photo";
+    if (review.photo) {
+      const img = document.createElement("img");
+      img.src = review.photo;
+      img.alt = review.name;
+      photoWrap.appendChild(img);
+    } else {
+      photoWrap.textContent = initials(review.name);
+    }
+    const photoBtn = document.createElement("span");
+    photoBtn.className = "reviews-editor-row__photo-btn";
+    photoBtn.textContent = "Cambiar";
+    photoWrap.appendChild(photoBtn);
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.className = "visually-hidden";
+    fileInput.addEventListener("change", ev => {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        review.photo = reader.result;
+        saveReviews();
+        render();
+        UI.showToast("Foto actualizada.");
+      };
+      reader.readAsDataURL(file);
+    });
+    photoWrap.appendChild(fileInput);
+
+    const fields = document.createElement("div");
+    fields.className = "reviews-editor-row__fields";
+
+    const top = document.createElement("div");
+    top.className = "reviews-editor-row__fields-top";
+
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.placeholder = "Nombre";
+    nameInput.value = review.name;
+    nameInput.addEventListener("input", () => { review.name = nameInput.value; saveReviews(); });
+    nameInput.addEventListener("blur", render);
+
+    const companyInput = document.createElement("input");
+    companyInput.type = "text";
+    companyInput.placeholder = "Empresa";
+    companyInput.value = review.company;
+    companyInput.addEventListener("input", () => { review.company = companyInput.value; saveReviews(); });
+
+    top.appendChild(nameInput);
+    top.appendChild(companyInput);
+
+    const reviewInput = document.createElement("textarea");
+    reviewInput.rows = 3;
+    reviewInput.placeholder = "Reseña";
+    reviewInput.value = review.review;
+    reviewInput.addEventListener("input", () => { review.review = reviewInput.value; saveReviews(); });
+
+    fields.appendChild(top);
+    fields.appendChild(reviewInput);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "reviews-editor-row__delete";
+    deleteBtn.textContent = "Eliminar";
+    deleteBtn.addEventListener("click", () => {
+      UI.askConfirm(`¿Eliminar la reseña de "${review.name}"?`, () => {
+        reviews = reviews.filter(r => r.id !== review.id);
+        saveReviews();
+        render();
+        UI.showToast("Reseña eliminada.");
+      });
+    });
+
+    row.appendChild(photoWrap);
+    row.appendChild(fields);
+    row.appendChild(deleteBtn);
+    return row;
   }
 
   render();
