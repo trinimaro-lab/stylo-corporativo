@@ -176,7 +176,7 @@
     fields.className = "reviews-editor-row__fields";
 
     const top = document.createElement("div");
-    top.className = "reviews-editor-row__fields-top";
+    top.className = "reviews-editor-row__fields-top reviews-editor-row__fields-top--two";
 
     const titleInput = document.createElement("input");
     titleInput.type = "text";
