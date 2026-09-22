@@ -142,7 +142,7 @@
     addBtn.className = "catalog-add-btn";
     addBtn.textContent = "+ Agregar reseña";
     addBtn.addEventListener("click", async () => {
-      const review = { id: uid(), name: "Nombre del cliente", company: "", review: "Escribe aquí la reseña.", photo: "", rating: 5, status: "approved" };
+      const review = { id: uid(), name: "Nombre del cliente", company: "", review: "Escribe aquí la reseña.", photo: "", product_photo: "", rating: 5, status: "approved" };
       try {
         await api("POST", "/api/reviews", review);
         reviews.push(review);
@@ -235,6 +235,54 @@
       badges.appendChild(dateBadge);
     }
     fields.appendChild(badges);
+
+    const productPhotoWrap = document.createElement("div");
+    productPhotoWrap.className = "reviews-editor-row__product-photo";
+
+    const productPhotoLabel = document.createElement("label");
+    productPhotoLabel.className = "reviews-editor-row__product-photo-upload";
+    if (review.product_photo) {
+      const productImg = document.createElement("img");
+      productImg.src = review.product_photo;
+      productImg.alt = "Foto del producto";
+      productPhotoLabel.appendChild(productImg);
+    } else {
+      const placeholder = document.createElement("span");
+      placeholder.textContent = "+ Foto del producto";
+      productPhotoLabel.appendChild(placeholder);
+    }
+
+    const productFileInput = document.createElement("input");
+    productFileInput.type = "file";
+    productFileInput.accept = "image/*";
+    productFileInput.className = "visually-hidden";
+    productFileInput.addEventListener("change", ev => {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        review.product_photo = reader.result;
+        markDirty(review.id);
+        render();
+      };
+      reader.readAsDataURL(file);
+    });
+    productPhotoLabel.appendChild(productFileInput);
+    productPhotoWrap.appendChild(productPhotoLabel);
+
+    if (review.product_photo) {
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "reviews-editor-row__product-photo-remove";
+      removeBtn.textContent = "Quitar foto";
+      removeBtn.addEventListener("click", () => {
+        review.product_photo = "";
+        markDirty(review.id);
+        render();
+      });
+      productPhotoWrap.appendChild(removeBtn);
+    }
+    fields.appendChild(productPhotoWrap);
 
     const top = document.createElement("div");
     top.className = "reviews-editor-row__fields-top";

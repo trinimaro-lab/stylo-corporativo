@@ -14,7 +14,8 @@
       name: "Revivir",
       company: "",
       review: "El trabajo de Stylo Corporativo me pareció realmente excelente. Desataco su atención amable y personalizada, y la calidad de las poleras y gorros. Un muy buen trabajo. La recomiendo 100%.",
-      photo: ""
+      photo: "",
+      product_photo: ""
     }
   ];
 
@@ -78,6 +79,16 @@
 
     card.appendChild(head);
     card.appendChild(quote);
+
+    if (review.product_photo) {
+      const productImg = document.createElement("img");
+      productImg.className = "testimonial-card__product-photo";
+      productImg.src = review.product_photo;
+      productImg.alt = "Producto de " + review.name;
+      productImg.loading = "lazy";
+      card.appendChild(productImg);
+    }
+
     return card;
   }
 

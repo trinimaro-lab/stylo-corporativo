@@ -57,18 +57,19 @@
   .survey-field textarea{ resize:vertical; min-height:110px; }
   .survey-stars{
     display:flex;
-    gap:6px;
-    font-size:32px;
+    gap:8px;
     line-height:1;
   }
   .survey-stars input{ display:none; }
   .survey-stars label{
     cursor:pointer;
-    color:#d7dde2;
+    color:#cfe3f5;
     margin:0;
-    transition:color .15s ease;
+    transition:color .15s ease, transform .1s ease;
   }
-  .survey-stars label.is-filled{ color:var(--orange); }
+  .survey-stars label svg{ width:38px; height:38px; display:block; }
+  .survey-stars label:hover{ transform:scale(1.08); }
+  .survey-stars label.is-filled{ color:#fdb022; }
   .survey-submit{
     width:100%;
     background:var(--orange);
@@ -88,6 +89,34 @@
     display:none;
   }
   .survey-error.is-visible{ display:block; }
+  .survey-photo-upload{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    border:2px dashed rgba(0,52,90,.25);
+    border-radius:12px;
+    padding:12px 14px;
+    cursor:pointer;
+  }
+  .survey-photo-upload__preview{
+    width:56px;
+    height:56px;
+    border-radius:8px;
+    object-fit:cover;
+    display:none;
+    flex:none;
+  }
+  .survey-photo-upload__preview.is-visible{ display:block; }
+  .survey-photo-upload__text{ font-size:13px; color:var(--text-gray); }
+  .survey-photo-remove{
+    background:transparent;
+    color:var(--orange);
+    font-size:12px;
+    font-weight:600;
+    padding:0;
+    display:none;
+  }
+  .survey-photo-remove.is-visible{ display:inline; }
   .survey-thanks{ display:none; text-align:center; }
   .survey-thanks h1{ margin-bottom:12px; }
   .survey-thanks p{ color:var(--text-gray); font-size:14px; }
@@ -116,17 +145,27 @@
       <div class="survey-field">
         <label>Calificación*</label>
         <div class="survey-stars" id="survey-stars">
-          <input type="radio" name="rating" value="1" id="star-1"><label for="star-1" data-value="1">★</label>
-          <input type="radio" name="rating" value="2" id="star-2"><label for="star-2" data-value="2">★</label>
-          <input type="radio" name="rating" value="3" id="star-3"><label for="star-3" data-value="3">★</label>
-          <input type="radio" name="rating" value="4" id="star-4"><label for="star-4" data-value="4">★</label>
-          <input type="radio" name="rating" value="5" id="star-5"><label for="star-5" data-value="5">★</label>
+          <input type="radio" name="rating" value="1" id="star-1"><label for="star-1" data-value="1"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2 L14.9 8.6 L22 9.3 L16.7 14.1 L18.2 21 L12 17.3 L5.8 21 L7.3 14.1 L2 9.3 L9.1 8.6 Z"/></svg></label>
+          <input type="radio" name="rating" value="2" id="star-2"><label for="star-2" data-value="2"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2 L14.9 8.6 L22 9.3 L16.7 14.1 L18.2 21 L12 17.3 L5.8 21 L7.3 14.1 L2 9.3 L9.1 8.6 Z"/></svg></label>
+          <input type="radio" name="rating" value="3" id="star-3"><label for="star-3" data-value="3"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2 L14.9 8.6 L22 9.3 L16.7 14.1 L18.2 21 L12 17.3 L5.8 21 L7.3 14.1 L2 9.3 L9.1 8.6 Z"/></svg></label>
+          <input type="radio" name="rating" value="4" id="star-4"><label for="star-4" data-value="4"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2 L14.9 8.6 L22 9.3 L16.7 14.1 L18.2 21 L12 17.3 L5.8 21 L7.3 14.1 L2 9.3 L9.1 8.6 Z"/></svg></label>
+          <input type="radio" name="rating" value="5" id="star-5"><label for="star-5" data-value="5"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2 L14.9 8.6 L22 9.3 L16.7 14.1 L18.2 21 L12 17.3 L5.8 21 L7.3 14.1 L2 9.3 L9.1 8.6 Z"/></svg></label>
         </div>
       </div>
 
       <div class="survey-field">
         <label for="survey-review">Tu reseña*</label>
         <textarea id="survey-review" name="review" required maxlength="2000" placeholder="Cuéntanos cómo fue tu experiencia con Stylo Corporativo..."></textarea>
+      </div>
+
+      <div class="survey-field">
+        <label for="survey-photo">Foto del producto (opcional)</label>
+        <label class="survey-photo-upload" for="survey-photo">
+          <img class="survey-photo-upload__preview" id="survey-photo-preview" alt="">
+          <span class="survey-photo-upload__text" id="survey-photo-text">Toca para subir una foto de tu producto</span>
+        </label>
+        <input type="file" id="survey-photo" accept="image/*" class="visually-hidden">
+        <button type="button" class="survey-photo-remove" id="survey-photo-remove">Quitar foto</button>
       </div>
 
       <p class="survey-error" id="survey-error">Por favor completa tu nombre, una calificación y tu reseña.</p>
@@ -164,6 +203,34 @@
     paintStars(checked ? Number(checked.value) : 0);
   });
 
+  var photoInput = document.getElementById("survey-photo");
+  var photoPreview = document.getElementById("survey-photo-preview");
+  var photoText = document.getElementById("survey-photo-text");
+  var photoRemoveBtn = document.getElementById("survey-photo-remove");
+  var productPhoto = "";
+
+  photoInput.addEventListener("change", function (ev) {
+    var file = ev.target.files && ev.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      productPhoto = reader.result;
+      photoPreview.src = productPhoto;
+      photoPreview.classList.add("is-visible");
+      photoText.textContent = file.name;
+      photoRemoveBtn.classList.add("is-visible");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  photoRemoveBtn.addEventListener("click", function () {
+    productPhoto = "";
+    photoInput.value = "";
+    photoPreview.classList.remove("is-visible");
+    photoText.textContent = "Toca para subir una foto de tu producto";
+    photoRemoveBtn.classList.remove("is-visible");
+  });
+
   var form = document.getElementById("survey-form");
   var errorEl = document.getElementById("survey-error");
   var submitBtn = document.getElementById("survey-submit");
@@ -189,7 +256,7 @@
     fetch("/api/survey", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name, company: company, review: review, rating: rating })
+      body: JSON.stringify({ name: name, company: company, review: review, rating: rating, productPhoto: productPhoto })
     })
       .then(function (res) {
         if (!res.ok) throw new Error("request failed");

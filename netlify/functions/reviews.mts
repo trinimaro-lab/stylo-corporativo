@@ -15,12 +15,12 @@ export default async (req: Request, context: Context) => {
     // Con token de admin: todas, incluidas las pendientes de la encuesta.
     const rows = isAuthorized(req)
       ? await db.sql`
-          SELECT id, name, company, review, photo, rating, status, submitted_at
+          SELECT id, name, company, review, photo, product_photo, rating, status, submitted_at
           FROM reviews
           ORDER BY (status = 'pending') DESC, submitted_at DESC
         `
       : await db.sql`
-          SELECT id, name, company, review, photo, rating, status, submitted_at
+          SELECT id, name, company, review, photo, product_photo, rating, status, submitted_at
           FROM reviews
           WHERE status = 'approved'
           ORDER BY sort_order ASC, updated_at ASC
@@ -35,19 +35,22 @@ export default async (req: Request, context: Context) => {
   if (req.method === "POST") {
     const body = await req.json();
     const { id, name, company, review, photo, rating, status, sortOrder } = body ?? {};
+    // acepta camelCase (encuesta) o snake_case (lo que devuelve el propio GET al panel).
+    const productPhoto = body?.productPhoto ?? body?.product_photo;
     if (!id || !name || !review) {
       return new Response("Missing fields", { status: 400 });
     }
     const safeRating = Math.min(5, Math.max(1, Math.round(Number(rating) || 5)));
     const safeStatus = status === "pending" ? "pending" : "approved";
     await db.sql`
-      INSERT INTO reviews (id, name, company, review, photo, rating, status, sort_order, updated_at)
-      VALUES (${id}, ${name}, ${company ?? ""}, ${review}, ${photo ?? ""}, ${safeRating}, ${safeStatus}, ${sortOrder ?? 0}, NOW())
+      INSERT INTO reviews (id, name, company, review, photo, product_photo, rating, status, sort_order, updated_at)
+      VALUES (${id}, ${name}, ${company ?? ""}, ${review}, ${photo ?? ""}, ${productPhoto ?? ""}, ${safeRating}, ${safeStatus}, ${sortOrder ?? 0}, NOW())
       ON CONFLICT (id) DO UPDATE SET
         name = EXCLUDED.name,
         company = EXCLUDED.company,
         review = EXCLUDED.review,
         photo = EXCLUDED.photo,
+        product_photo = EXCLUDED.product_photo,
         rating = EXCLUDED.rating,
         status = EXCLUDED.status,
         sort_order = EXCLUDED.sort_order,
