@@ -3,6 +3,10 @@
    Lee y guarda en /api/reviews (base de datos), visible para todos los
    visitantes del sitio apenas se guarda un cambio.
 
+   Los campos (nombre, empresa, reseña, foto) se guardan en memoria mientras
+   se editan, y se envían todos juntos al hacer clic en "Guardar cambios".
+   Agregar y eliminar siguen siendo inmediatos.
+
    Cómo usarlo: en una página con:
      <div id="reviews-editor-root"></div>
      <script src="editor-ui.js"></script>
@@ -19,6 +23,7 @@
   if (!root) return;
 
   let reviews = [];
+  let dirtyIds = new Set();
 
   async function api(method, body) {
     const res = await UI.authFetch("/api/reviews", {
@@ -26,8 +31,19 @@
       headers: { "Content-Type": "application/json" },
       body: body ? JSON.stringify(body) : undefined
     });
-    if (!res.ok) throw new Error("request failed: " + res.status);
+    if (!res.ok) {
+      const err = new Error("request failed: " + res.status);
+      err.isAuthError = res.status === 401;
+      throw err;
+    }
     return res.json();
+  }
+
+  // authFetch ya avisa "clave incorrecta o vencida" y vuelve a pedirla;
+  // no lo tapemos con un segundo toast genérico.
+  function notifyFailure(message, err) {
+    if (err && err.isAuthError) return;
+    UI.showToast(message);
   }
 
   async function loadReviews() {
@@ -44,6 +60,11 @@
     return (name || "?").trim().charAt(0).toUpperCase();
   }
 
+  function updateSaveBtnState() {
+    const saveBtn = document.getElementById("reviews-save-btn");
+    if (saveBtn) saveBtn.disabled = dirtyIds.size === 0;
+  }
+
   function render() {
     root.innerHTML = "";
 
@@ -51,6 +72,9 @@
     list.className = "reviews-editor-list";
     reviews.forEach(review => list.appendChild(buildRow(review)));
     root.appendChild(list);
+
+    const actions = document.createElement("div");
+    actions.className = "catalog-toolbar";
 
     const addBtn = document.createElement("button");
     addBtn.type = "button";
@@ -64,14 +88,37 @@
         render();
         UI.showToast("Reseña agregada.");
       } catch (e) {
-        UI.showToast("No se pudo agregar la reseña.");
+        notifyFailure("No se pudo agregar la reseña.", e);
       }
     });
 
-    const actions = document.createElement("div");
-    actions.className = "catalog-toolbar";
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.id = "reviews-save-btn";
+    saveBtn.className = "catalog-edit-bar__save";
+    saveBtn.textContent = "Guardar cambios";
+    saveBtn.disabled = dirtyIds.size === 0;
+    saveBtn.addEventListener("click", saveChanges);
+
     actions.appendChild(addBtn);
+    actions.appendChild(saveBtn);
     root.appendChild(actions);
+  }
+
+  async function saveChanges() {
+    if (dirtyIds.size === 0) return;
+    const pending = reviews.filter(r => dirtyIds.has(r.id));
+    try {
+      for (const review of pending) {
+        await api("POST", review);
+        dirtyIds.delete(review.id);
+      }
+      updateSaveBtnState();
+      UI.showToast("Cambios guardados.");
+    } catch (e) {
+      updateSaveBtnState();
+      notifyFailure("No se pudieron guardar todos los cambios. Vuelve a intentar.", e);
+    }
   }
 
   function buildRow(review) {
@@ -101,15 +148,10 @@
       const file = ev.target.files && ev.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = async () => {
+      reader.onload = () => {
         review.photo = reader.result;
-        try {
-          await api("POST", review);
-          render();
-          UI.showToast("Foto actualizada.");
-        } catch (e) {
-          UI.showToast("No se pudo guardar la foto.");
-        }
+        dirtyIds.add(review.id);
+        render();
       };
       reader.readAsDataURL(file);
     });
@@ -121,27 +163,23 @@
     const top = document.createElement("div");
     top.className = "reviews-editor-row__fields-top";
 
-    async function saveReview() {
-      try {
-        await api("POST", review);
-      } catch (e) {
-        UI.showToast("No se pudo guardar el cambio.");
-      }
+    function markDirty() {
+      dirtyIds.add(review.id);
+      updateSaveBtnState();
     }
 
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.placeholder = "Nombre";
     nameInput.value = review.name;
-    nameInput.addEventListener("input", () => { review.name = nameInput.value; });
-    nameInput.addEventListener("blur", () => { saveReview(); render(); });
+    nameInput.addEventListener("input", () => { review.name = nameInput.value; markDirty(); });
+    nameInput.addEventListener("blur", () => { render(); });
 
     const companyInput = document.createElement("input");
     companyInput.type = "text";
     companyInput.placeholder = "Empresa";
     companyInput.value = review.company;
-    companyInput.addEventListener("input", () => { review.company = companyInput.value; });
-    companyInput.addEventListener("blur", saveReview);
+    companyInput.addEventListener("input", () => { review.company = companyInput.value; markDirty(); });
 
     top.appendChild(nameInput);
     top.appendChild(companyInput);
@@ -150,8 +188,7 @@
     reviewInput.rows = 3;
     reviewInput.placeholder = "Reseña";
     reviewInput.value = review.review;
-    reviewInput.addEventListener("input", () => { review.review = reviewInput.value; });
-    reviewInput.addEventListener("blur", saveReview);
+    reviewInput.addEventListener("input", () => { review.review = reviewInput.value; markDirty(); });
 
     fields.appendChild(top);
     fields.appendChild(reviewInput);
@@ -165,10 +202,11 @@
         try {
           await api("DELETE", { id: review.id });
           reviews = reviews.filter(r => r.id !== review.id);
+          dirtyIds.delete(review.id);
           render();
           UI.showToast("Reseña eliminada.");
         } catch (e) {
-          UI.showToast("No se pudo eliminar.");
+          notifyFailure("No se pudo eliminar.", e);
         }
       });
     });

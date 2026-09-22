@@ -114,20 +114,27 @@ window.StyloEditorUI = (function () {
     toastTimer = setTimeout(function () { toast.classList.remove("is-visible"); }, 2200);
   }
 
+  var lastPrompt = { title: "Panel de administración", description: "Ingresa la clave para continuar editando." };
+
   function unlockAndRun(editorTitle, editorDescription, run) {
+    lastPrompt = { title: editorTitle, description: editorDescription };
     if (isUnlocked()) { run(); return; }
     askPassword(editorTitle, editorDescription, run);
   }
 
   // fetch con el header de autorización; si la API dice que la clave está
-  // mal (401), la borra y avisa para que se vuelva a pedir.
+  // mal o venció (401), la borra, avisa y vuelve a pedirla en el momento
+  // (en vez de fallar en silencio con un error genérico).
   async function authFetch(url, options) {
     options = options || {};
     var headers = Object.assign({}, options.headers || {}, { "x-admin-token": getToken() });
     var res = await fetch(url, Object.assign({}, options, { headers: headers }));
     if (res.status === 401) {
       clearToken();
-      showToast("Clave incorrecta o vencida. Vuelve a intentar.");
+      showToast("Clave incorrecta o vencida. Vuelve a ingresarla.");
+      askPassword(lastPrompt.title, lastPrompt.description, function () {
+        showToast("Clave actualizada. Vuelve a intentar tu cambio.");
+      });
     }
     return res;
   }

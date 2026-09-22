@@ -1,7 +1,7 @@
 (() => {
   const IMAGE_PATH = "assets/portfolio/images/";
 
-  const works = [
+  const DEFAULT_WORKS = [
     { id: "01", title: "Bordado institucional", category: "bordado", label: "Bordado", image: "01.webp", description: "Detalle de bordado aplicado sobre prenda, con lectura clara y terminación precisa." },
     { id: "02", title: "Producción para evento", category: "bordado", label: "Bordado", image: "02.webp", description: "Preparación coordinada de piezas personalizadas para una experiencia corporativa." },
     { id: "03", title: "Jockey corporativo", category: "bordado", label: "Bordado", image: "03.webp", description: "Logotipo multicolor bordado en jockey de visera plana." },
@@ -21,19 +21,22 @@
     { id: "18", title: "Producción de cristalería", category: "drinkware", label: "Vasos y tazones", image: "18.webp", description: "Producción amplia de vasos personalizados con múltiples diseños." },
     { id: "19", title: "Bordado de personaje", category: "bordado", label: "Bordado", image: "19.webp", description: "Bordado multicolor de personaje con definición en detalles pequeños." },
     { id: "20", title: "Bordado sobre polera", category: "bordado", label: "Bordado", image: "20.webp", description: "Aplicación bordada de alta presencia sobre una prenda oscura." }
-  ];
+  ].map(work => ({ ...work, image: IMAGE_PATH + work.image }));
 
   const portfolio = document.querySelector("#stylo-portafolio");
   if (!portfolio) return;
 
+  let works = [];
   const state = { filter: "todos" };
   const grid = document.querySelector("#stylo-grid");
   const resultCount = document.querySelector("#stylo-result-count");
   const emptyState = document.querySelector("#stylo-empty");
   const modal = document.querySelector("#stylo-modal");
 
+  // el image ya viene como ruta completa o dataURL, tanto para los trabajos
+  // originales como para las fotos subidas desde el panel de administración.
   function imageUrl(file) {
-    return `${IMAGE_PATH}${file}`;
+    return file;
   }
 
   function renderCards() {
@@ -109,5 +112,17 @@
 
   document.querySelector("#stylo-modal-add").addEventListener("click", () => modal.close());
 
-  renderCards();
+  async function loadWorks() {
+    works = DEFAULT_WORKS;
+    try {
+      const res = await fetch("/api/portfolio");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length) works = data;
+      }
+    } catch (e) {}
+    renderCards();
+  }
+
+  loadWorks();
 })();

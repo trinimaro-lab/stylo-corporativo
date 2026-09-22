@@ -2,6 +2,10 @@
    Editor de catálogo — panel de administración (admin.html)
    Lee y guarda en /api/products (base de datos), visible para todos los
    visitantes del sitio apenas se guarda un cambio.
+
+   Los cambios de foto/título se guardan en memoria mientras se edita, y se
+   envían todos juntos al hacer clic en "Guardar cambios" (agregar y eliminar
+   siguen siendo inmediatos, ya que son acciones puntuales y confirmadas).
    ========================================================================== */
 
 (function () {
@@ -18,6 +22,7 @@
 
   var editMode = false;
   var products = [];
+  var dirtyIds = new Set();
 
   async function api(method, body) {
     const res = await UI.authFetch("/api/products", {
@@ -25,8 +30,19 @@
       headers: { "Content-Type": "application/json" },
       body: body ? JSON.stringify(body) : undefined
     });
-    if (!res.ok) throw new Error("request failed: " + res.status);
+    if (!res.ok) {
+      const err = new Error("request failed: " + res.status);
+      err.isAuthError = res.status === 401;
+      throw err;
+    }
     return res.json();
+  }
+
+  // authFetch ya avisa "clave incorrecta o vencida" y vuelve a pedirla;
+  // no lo tapemos con un segundo toast genérico.
+  function notifyFailure(message, err) {
+    if (err && err.isAuthError) return;
+    UI.showToast(message);
   }
 
   async function loadProducts() {
@@ -39,12 +55,17 @@
     return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   }
 
+  function updateSaveBtnState() {
+    if (saveBtn) saveBtn.disabled = dirtyIds.size === 0;
+  }
+
   function render() {
     grid.innerHTML = "";
     products.forEach(function (product) {
       grid.appendChild(buildCard(product));
     });
     if (addBtnWrapper) addBtnWrapper.style.display = editMode ? "flex" : "none";
+    updateSaveBtnState();
   }
 
   function buildCard(product) {
@@ -86,15 +107,11 @@
         var file = ev.target.files && ev.target.files[0];
         if (!file) return;
         var reader = new FileReader();
-        reader.onload = async function () {
+        reader.onload = function () {
           product.image = reader.result;
           img.src = product.image;
-          try {
-            await api("POST", { id: product.id, title: product.title, image: product.image });
-            UI.showToast("Imagen actualizada.");
-          } catch (e) {
-            UI.showToast("No se pudo guardar la imagen.");
-          }
+          dirtyIds.add(product.id);
+          updateSaveBtnState();
         };
         reader.readAsDataURL(file);
       });
@@ -109,10 +126,11 @@
           try {
             await api("DELETE", { id: product.id });
             products = products.filter(function (p) { return p.id !== product.id; });
+            dirtyIds.delete(product.id);
             render();
             UI.showToast("Producto eliminado.");
           } catch (e) {
-            UI.showToast("No se pudo eliminar.");
+            notifyFailure("No se pudo eliminar.", e);
           }
         });
       });
@@ -123,15 +141,12 @@
 
       caption.contentEditable = "true";
       caption.classList.add("is-editable");
-      caption.addEventListener("blur", async function () {
+      caption.addEventListener("blur", function () {
         product.title = caption.textContent.trim() || product.title;
         caption.textContent = product.title;
         img.alt = product.title;
-        try {
-          await api("POST", { id: product.id, title: product.title, image: product.image });
-        } catch (e) {
-          UI.showToast("No se pudo guardar el título.");
-        }
+        dirtyIds.add(product.id);
+        updateSaveBtnState();
       });
       caption.addEventListener("keydown", function (ev) {
         if (ev.key === "Enter") { ev.preventDefault(); caption.blur(); }
@@ -149,7 +164,23 @@
       render();
       UI.showToast("Producto agregado. Cambia su foto y título.");
     } catch (e) {
-      UI.showToast("No se pudo agregar el producto.");
+      notifyFailure("No se pudo agregar el producto.", e);
+    }
+  }
+
+  async function saveChanges() {
+    if (dirtyIds.size === 0) return;
+    var pending = products.filter(function (p) { return dirtyIds.has(p.id); });
+    try {
+      for (var i = 0; i < pending.length; i++) {
+        await api("POST", pending[i]);
+        dirtyIds.delete(pending[i].id);
+      }
+      updateSaveBtnState();
+      UI.showToast("Cambios guardados.");
+    } catch (e) {
+      updateSaveBtnState();
+      notifyFailure("No se pudieron guardar todos los cambios. Vuelve a intentar.", e);
     }
   }
 
@@ -179,6 +210,18 @@
 
   var resetBtn = document.getElementById("catalog-reset-btn");
   if (resetBtn) resetBtn.style.display = "none"; // el "original" ahora vive en la base de datos
+
+  var saveBtn = null;
+  if (editBar) {
+    saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.id = "catalog-save-btn";
+    saveBtn.className = "catalog-edit-bar__save";
+    saveBtn.textContent = "Guardar cambios";
+    saveBtn.disabled = true;
+    saveBtn.addEventListener("click", saveChanges);
+    editBar.appendChild(saveBtn);
+  }
 
   loadProducts();
 })();

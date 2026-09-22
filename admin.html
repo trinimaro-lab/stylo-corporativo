@@ -55,13 +55,19 @@
     <p class="admin-hint">Agrega, edita o elimina testimonios (foto, nombre, empresa y reseña). Aparecen en el carrusel de la web.</p>
     <div id="reviews-editor-root"></div>
   </section>
+
+  <section class="admin-section">
+    <h2>Portafolio — "Ver trabajos realizados"</h2>
+    <p class="admin-hint">Sube fotos de trabajos terminados, con su título, categoría y descripción. Aparecen en el acordeón de portafolio de la web.</p>
+    <div id="portfolio-editor-root"></div>
+  </section>
 </div>
 
 <script src="editor-ui.js"></script>
 <script>
   window.StyloEditorUI.unlockAndRun(
     "Panel de administración",
-    "Ingresa la clave para editar el catálogo y las reseñas de Stylo Corporativo.",
+    "Ingresa la clave para editar el catálogo, las reseñas y el portafolio de Stylo Corporativo.",
     function () {
       document.getElementById("admin-gate").style.display = "none";
       document.getElementById("admin-content").style.display = "block";
@@ -70,5 +76,6 @@
 </script>
 <script src="products-editor.js"></script>
 <script src="reviews-editor.js"></script>
+<script src="portfolio-editor.js"></script>
 </body>
 </html>
