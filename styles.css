@@ -1217,6 +1217,27 @@ body.quote-no-scroll{ overflow:hidden; }
 .review-modal__company{ font-size:12px; color:var(--cyan); font-weight:600; margin:2px 0 0; }
 .review-modal__text{ font-size:14px; line-height:1.7; color:var(--text-gray); margin:0; }
 
+.contact-modal{
+  /* fixed (no relative), igual que .review-modal: conserva el centrado
+     nativo de dialog:modal y sigue sirviendo de referencia para el botón
+     de cerrar en position:absolute. */
+  position:fixed;
+  margin:auto;
+  inset:0;
+  width:min(520px, calc(100% - 2rem));
+  max-height:calc(100dvh - 2rem);
+  padding:36px;
+  border:0;
+  border-radius:16px;
+  background:var(--white);
+  box-shadow:0 24px 70px rgba(0,0,0,.22);
+  overflow-y:auto;
+}
+.contact-modal::backdrop{ background:rgba(0,20,36,.6); backdrop-filter:blur(4px); }
+.contact-modal__title{ color:var(--navy); font-size:22px; font-weight:700; margin:0 0 6px; }
+.contact-modal__desc{ color:var(--text-gray); font-size:13px; margin:0 0 22px; }
+.contact-modal__form .form-row{ margin-bottom:12px; }
+
 /* ---------------------------------- Contacto ---------------------------------- */
 .contacto{
   position:relative;
@@ -1269,7 +1290,8 @@ body.quote-no-scroll{ overflow:hidden; }
   flex:1 1 260px;
 }
 .form-field input,
-.form-field textarea{
+.form-field textarea,
+.form-field select{
   width:100%;
   border:1px solid rgba(0,52,90,.15);
   border-radius:8px;

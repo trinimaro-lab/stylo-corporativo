@@ -39,7 +39,7 @@
 
       <form class="hero__search" action="#contacto">
         <input type="text" id="hero-search-input" placeholder="Necesitas algo especial?" aria-label="Necesitas algo especial?">
-        <button type="submit" class="btn btn-lime" id="hero-search-btn">Contáctanos</button>
+        <button type="button" class="btn btn-lime" id="hero-search-btn">Contáctanos</button>
       </form>
     </div>
   </div>
@@ -245,6 +245,69 @@
   <p class="review-modal__text" id="review-modal-text"></p>
 </dialog>
 
+<!-- Formulario rápido de cotización (botón "Contáctanos" del hero) -->
+<dialog class="contact-modal" id="contact-modal">
+  <button class="review-modal__close" type="button" id="contact-modal-close" aria-label="Cerrar formulario">×</button>
+  <h3 class="contact-modal__title">Cotiza tu Proyecto</h3>
+  <p class="contact-modal__desc">Cuéntanos qué necesitas y te enviamos una cotización sin costo.</p>
+
+  <form class="contact-modal__form" id="contact-modal-form">
+    <div class="form-row">
+      <div class="form-field"><input type="text" name="nombre" placeholder="Nombre y apellido*" required></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><input type="tel" name="telefono" placeholder="Teléfono*" required></div>
+      <div class="form-field"><input type="text" name="empresa" placeholder="Empresa"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><input type="email" name="correo" placeholder="Correo*" required></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <select name="producto" id="contact-modal-producto" required>
+          <option value="" disabled selected>¿Qué quieres cotizar?*</option>
+          <option value="Gorro">Gorro</option>
+          <option value="Termo">Termo</option>
+          <option value="Polera">Polera</option>
+          <option value="Mochila">Mochila</option>
+          <option value="Chaqueta">Chaqueta</option>
+          <option value="Cuaderno">Cuaderno</option>
+          <option value="Mug">Mug</option>
+          <option value="Tote bag">Tote bag</option>
+          <option value="Lápices">Lápices</option>
+          <option value="Pendrive">Pendrive</option>
+          <option value="Botella">Botella</option>
+          <option value="Paraguas">Paraguas</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-field" id="contact-modal-producto-otro-wrap" hidden>
+        <input type="text" name="producto_otro" id="contact-modal-producto-otro" placeholder="¿Qué producto?">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <select name="tecnica" id="contact-modal-tecnica" required>
+          <option value="" disabled selected>Técnica*</option>
+          <option value="Bordado">Bordado</option>
+          <option value="Sublimación">Sublimación</option>
+          <option value="Estampado">Estampado (DTF/serigrafía)</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-field" id="contact-modal-tecnica-otro-wrap" hidden>
+        <input type="text" name="tecnica_otro" id="contact-modal-tecnica-otro" placeholder="¿Qué técnica?">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><input type="number" name="cantidad" placeholder="Cantidad" min="1"></div>
+    </div>
+    <div class="form-submit-row">
+      <button type="submit" class="btn-submit">Enviar cotización</button>
+    </div>
+  </form>
+</dialog>
+
 <!-- ============================== CONTACTO ============================== -->
 <section class="contacto" id="contacto">
   <div class="contacto__scrim" aria-hidden="true"></div>
@@ -418,5 +481,6 @@
 <script src="stylo-portfolio.js?v=1" defer></script>
 <script src="brands.js?v=1"></script>
 <script src="site-settings.js?v=1"></script>
+<script src="contact-modal.js?v=1"></script>
 </body>
 </html>
