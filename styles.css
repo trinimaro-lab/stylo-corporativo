@@ -1162,7 +1162,13 @@ body.quote-no-scroll{ overflow:hidden; }
 }
 
 .review-modal{
-  position:relative;
+  /* fixed (no relative): así conserva el centrado nativo del navegador para
+     dialog:modal; fixed igual sirve de referencia para el botón de cerrar
+     en position:absolute. Con "relative" el modal perdía ese centrado y la
+     página saltaba al scroll top al abrirlo. */
+  position:fixed;
+  margin:auto;
+  inset:0;
   width:min(560px, calc(100% - 2rem));
   max-height:calc(100dvh - 2rem);
   padding:36px;
