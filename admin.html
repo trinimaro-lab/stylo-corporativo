@@ -79,6 +79,15 @@
   .site-editor-image-upload img{ width:100%; height:100%; object-fit:contain; }
   .site-editor-image-upload span{ font-size:12px; font-weight:600; color:var(--navy); }
 
+  .textos-editor-group{ margin-bottom:8px; }
+  .textos-editor-group__title{
+    color:var(--navy);
+    font-size:15px;
+    margin:0 0 16px;
+    padding-bottom:10px;
+    border-bottom:1px solid rgba(0,52,90,.12);
+  }
+
   @media (max-width: 860px){
     .admin-layout{ flex-direction:column; }
     .admin-sidebar{
@@ -106,6 +115,7 @@
   <div class="admin-layout">
     <nav class="admin-sidebar" id="admin-sidebar">
       <button type="button" class="admin-sidebar__item is-active" data-target="section-header">Header</button>
+      <button type="button" class="admin-sidebar__item" data-target="section-textos">Textos del sitio</button>
       <button type="button" class="admin-sidebar__item" data-target="section-catalog">Nuestro Trabajo</button>
       <button type="button" class="admin-sidebar__item" data-target="section-brands">Marcas que confían en nosotros</button>
       <button type="button" class="admin-sidebar__item" data-target="section-portfolio">Portafolio</button>
@@ -118,6 +128,12 @@
         <h2>Header</h2>
         <p class="admin-hint">Logo del menú, foto de fondo y textos del hero (portada) del sitio.</p>
         <div id="header-editor-root"></div>
+      </section>
+
+      <section class="admin-section" id="section-textos">
+        <h2>Textos del sitio</h2>
+        <p class="admin-hint">Edita cualquier texto de la web: menú, servicios, proceso de pedido, portafolio, reseñas, formularios, footer y panel de cotización. (El catálogo, el portafolio, las marcas y las reseñas tienen su propia sección más abajo para fotos y listas.)</p>
+        <div id="textos-editor-root"></div>
       </section>
 
       <section class="admin-section" id="section-catalog">
@@ -187,6 +203,7 @@
   });
 </script>
 <script src="header-editor.js"></script>
+<script src="textos-editor.js"></script>
 <script src="products-editor.js"></script>
 <script src="reviews-editor.js"></script>
 <script src="portfolio-editor.js"></script>
