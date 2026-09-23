@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/trinimaro-lab/stylo-corporativo#readme",
   "dependencies": {
-    "@netlify/database": "^2.0.1",
-    "@netlify/functions": "^6.0.0"
+    "@vercel/functions": "^3.9.9",
+    "pg": "^8.23.0"
   }
 }
