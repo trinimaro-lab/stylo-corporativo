@@ -596,6 +596,34 @@ body.quote-no-scroll{ overflow:hidden; }
   margin:32px 0 0;
 }
 
+/* ---------------------------------- Carga masiva de portafolio ---------------------------------- */
+.portfolio-bulk-panel{
+  background:#eaf3f8;
+  border:1px dashed var(--cyan);
+  border-radius:12px;
+  padding:16px 20px;
+  margin-bottom:20px;
+}
+.portfolio-bulk-panel__count{
+  font-size:13px;
+  color:var(--navy);
+  margin:0 0 12px;
+  font-weight:600;
+}
+.portfolio-bulk-panel__row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.portfolio-bulk-panel__row select{
+  padding:9px 12px;
+  border:1px solid rgba(0,52,90,.2);
+  border-radius:8px;
+  font-family:var(--font);
+  font-size:13px;
+}
+
 /* ---------------------------------- Editor de reseñas (panel dormido, sin enlazar) ---------------------------------- */
 .reviews-editor-list{
   display:flex;

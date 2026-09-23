@@ -7,6 +7,10 @@
    mientras se editan, y se envían todos juntos al hacer clic en
    "Guardar cambios". Agregar y eliminar siguen siendo inmediatos.
 
+   También permite carga masiva: seleccionar varias fotos a la vez, elegir
+   una categoría para todas, y se crean automáticamente (título a partir
+   del nombre del archivo). Después se pueden ajustar una por una.
+
    Cómo usarlo: en una página con:
      <div id="portfolio-editor-root"></div>
      <script src="editor-ui.js"></script>
@@ -35,6 +39,7 @@
 
   let works = [];
   let dirtyIds = new Set();
+  let pendingBulkFiles = null;
 
   async function api(method, body) {
     const res = await UI.authFetch("/api/portfolio", {
@@ -67,6 +72,21 @@
     return "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   }
 
+  function titleFromFilename(filename) {
+    const base = filename.replace(/\.[^/.]+$/, "").replace(/[-_]+/g, " ").trim();
+    if (!base) return "Nuevo trabajo";
+    return base.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  }
+
+  function readAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
   function updateSaveBtnState() {
     const saveBtn = document.getElementById("portfolio-save-btn");
     if (saveBtn) saveBtn.disabled = dirtyIds.size === 0;
@@ -84,6 +104,10 @@
     list.className = "reviews-editor-list";
     works.forEach(work => list.appendChild(buildRow(work)));
     root.appendChild(list);
+
+    if (pendingBulkFiles) {
+      root.appendChild(buildBulkPanel());
+    }
 
     const actions = document.createElement("div");
     actions.className = "catalog-toolbar";
@@ -111,6 +135,24 @@
       }
     });
 
+    const bulkBtn = document.createElement("button");
+    bulkBtn.type = "button";
+    bulkBtn.className = "catalog-add-btn";
+    bulkBtn.textContent = "+ Carga masiva";
+    bulkBtn.addEventListener("click", () => bulkInput.click());
+
+    const bulkInput = document.createElement("input");
+    bulkInput.type = "file";
+    bulkInput.accept = "image/*";
+    bulkInput.multiple = true;
+    bulkInput.className = "visually-hidden";
+    bulkInput.addEventListener("change", ev => {
+      const files = Array.from(ev.target.files || []);
+      if (!files.length) return;
+      pendingBulkFiles = files;
+      render();
+    });
+
     const saveBtn = document.createElement("button");
     saveBtn.type = "button";
     saveBtn.id = "portfolio-save-btn";
@@ -120,8 +162,88 @@
     saveBtn.addEventListener("click", saveChanges);
 
     actions.appendChild(addBtn);
+    actions.appendChild(bulkBtn);
+    actions.appendChild(bulkInput);
     actions.appendChild(saveBtn);
     root.appendChild(actions);
+  }
+
+  function buildBulkPanel() {
+    const panel = document.createElement("div");
+    panel.className = "portfolio-bulk-panel";
+
+    const count = document.createElement("p");
+    count.className = "portfolio-bulk-panel__count";
+    count.textContent = pendingBulkFiles.length + " foto" + (pendingBulkFiles.length === 1 ? "" : "s") + " seleccionada" + (pendingBulkFiles.length === 1 ? "" : "s") + ". Elige la categoría para todas (después puedes cambiarla por trabajo):";
+    panel.appendChild(count);
+
+    const row = document.createElement("div");
+    row.className = "portfolio-bulk-panel__row";
+
+    const categorySelect = document.createElement("select");
+    CATEGORIES.forEach(c => {
+      const option = document.createElement("option");
+      option.value = c.value;
+      option.textContent = c.label;
+      categorySelect.appendChild(option);
+    });
+    row.appendChild(categorySelect);
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.type = "button";
+    confirmBtn.className = "catalog-edit-bar__save";
+    confirmBtn.textContent = "Cargar fotos";
+    confirmBtn.addEventListener("click", () => runBulkUpload(categorySelect.value, confirmBtn, cancelBtn));
+    row.appendChild(confirmBtn);
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.className = "reviews-editor-row__delete";
+    cancelBtn.textContent = "Cancelar";
+    cancelBtn.addEventListener("click", () => { pendingBulkFiles = null; render(); });
+    row.appendChild(cancelBtn);
+
+    panel.appendChild(row);
+    return panel;
+  }
+
+  async function runBulkUpload(category, confirmBtn, cancelBtn) {
+    const files = pendingBulkFiles;
+    const total = files.length;
+    confirmBtn.disabled = true;
+    cancelBtn.disabled = true;
+
+    let done = 0;
+    let failed = 0;
+
+    for (const file of files) {
+      confirmBtn.textContent = "Cargando " + (done + 1) + " de " + total + "…";
+      try {
+        const image = await readAsDataURL(file);
+        const work = {
+          id: uid(),
+          title: titleFromFilename(file.name),
+          category: category,
+          label: labelFor(category),
+          image: image,
+          description: ""
+        };
+        await api("POST", work);
+        works.push(work);
+        done++;
+      } catch (e) {
+        failed++;
+      }
+    }
+
+    pendingBulkFiles = null;
+    render();
+
+    if (failed === 0) {
+      UI.showToast(done + " foto" + (done === 1 ? "" : "s") + " agregada" + (done === 1 ? "" : "s") + ".");
+    } else {
+      UI.showToast(done + " foto(s) agregadas, " + failed + " fallaron. Vuelve a intentar con esas.");
+    }
   }
 
   async function saveChanges() {
