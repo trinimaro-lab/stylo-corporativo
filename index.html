@@ -12,13 +12,13 @@
 
 <!-- ============================== HEADER / HERO ============================== -->
 <header class="hero" id="inicio">
-  <img class="hero__bg" src="assets/hero-bg.jpg" alt="">
+  <img class="hero__bg" id="hero-bg-image" src="assets/hero-bg.jpg" alt="">
   <div class="hero__scrim" aria-hidden="true"></div>
 
   <div class="hero__navband">
     <nav class="hero__nav container">
       <a class="hero__logo" href="#inicio" aria-label="Stylo Corporativo — inicio">
-        <img src="assets/logo-white.png" alt="Stylo Corporativo">
+        <img id="header-logo-image" src="assets/logo-white.png" alt="Stylo Corporativo">
       </a>
       <div class="hero__links">
         <a href="#inicio">Inicio</a>
@@ -33,12 +33,12 @@
 
   <div class="hero__inner container">
     <div class="hero__content">
-      <p class="hero__kicker">Tu marca habla desde la primera mirada.</p>
-      <p class="hero__title">¡Potencia tu imagen corporativa<br>con bordados de excelencia!</p>
+      <p class="hero__kicker" id="hero-kicker-text">Tu marca habla desde la primera mirada.</p>
+      <p class="hero__title" id="hero-title-text">¡Potencia tu imagen corporativa<br>con bordados de excelencia!</p>
 
       <form class="hero__search" action="#contacto">
-        <input type="text" placeholder="Necesitas algo especial?" aria-label="Necesitas algo especial?">
-        <button type="submit" class="btn btn-lime">Contáctanos</button>
+        <input type="text" id="hero-search-input" placeholder="Necesitas algo especial?" aria-label="Necesitas algo especial?">
+        <button type="submit" class="btn btn-lime" id="hero-search-btn">Contáctanos</button>
       </form>
     </div>
   </div>
@@ -296,7 +296,7 @@
   <div class="container">
     <div class="footer__grid">
       <div class="footer__brand">
-        <img class="footer__logo" src="assets/footer-logo.png" alt="Stylo Corporativo">
+        <img class="footer__logo" id="footer-logo-image" src="assets/footer-logo.png" alt="Stylo Corporativo">
       </div>
 
       <div class="footer__cols">
@@ -314,8 +314,8 @@
           <ul>
             <li><a href="#contacto">Cotiza tu Proyecto</a></li>
             <li><a href="#contacto">Preguntas Frecuentes</a></li>
-            <li><a href="#contacto">[Teléfono]</a></li>
-            <li><a href="#contacto">[Correo]</a></li>
+            <li><a href="#contacto" id="footer-phone">[Teléfono]</a></li>
+            <li><a href="#contacto" id="footer-email">[Correo]</a></li>
           </ul>
         </div>
         <div class="footer__col">
@@ -328,11 +328,11 @@
         </div>
         <div class="footer__col">
           <div class="footer__social">
-            <a href="#" aria-label="Facebook"><img src="assets/icons/social-facebook.svg" alt=""></a>
-            <a href="#" aria-label="Instagram"><img src="assets/icons/social-instagram.svg" alt=""></a>
-            <a href="#" aria-label="Linkedin"><img src="assets/icons/social-linkedin.svg" alt=""></a>
-            <a href="#" aria-label="Twitter"><img src="assets/icons/social-twitter.svg" alt=""></a>
-            <a href="#" aria-label="Pinterest"><img src="assets/icons/social-pinterest.svg" alt=""></a>
+            <a href="#" id="footer-social-facebook" aria-label="Facebook"><img src="assets/icons/social-facebook.svg" alt=""></a>
+            <a href="#" id="footer-social-instagram" aria-label="Instagram"><img src="assets/icons/social-instagram.svg" alt=""></a>
+            <a href="#" id="footer-social-linkedin" aria-label="Linkedin"><img src="assets/icons/social-linkedin.svg" alt=""></a>
+            <a href="#" id="footer-social-twitter" aria-label="Twitter"><img src="assets/icons/social-twitter.svg" alt=""></a>
+            <a href="#" id="footer-social-pinterest" aria-label="Pinterest"><img src="assets/icons/social-pinterest.svg" alt=""></a>
           </div>
         </div>
       </div>
@@ -342,7 +342,7 @@
   <hr class="footer__rule">
 
   <div class="container footer__bottom">
-    <p>© 2026 Stylo Corporativo. Todos los derechos reservados.</p>
+    <p id="footer-copyright-text">© 2026 Stylo Corporativo. Todos los derechos reservados.</p>
   </div>
 </footer>
 
@@ -403,5 +403,6 @@
 <script src="reviews-marquee.js?v=1"></script>
 <script src="stylo-portfolio.js?v=1" defer></script>
 <script src="brands.js?v=1"></script>
+<script src="site-settings.js?v=1"></script>
 </body>
 </html>

@@ -508,7 +508,7 @@ body.quote-no-scroll{ overflow:hidden; }
   background:var(--navy);
   color:var(--white);
   border-radius:999px;
-  padding:10px 26px;
+  padding:14px 32px;
   font-size:12px;
   font-weight:600;
   letter-spacing:.03em;
@@ -534,7 +534,7 @@ body.quote-no-scroll{ overflow:hidden; }
 .catalog-edit-bar__actions{ display:flex; gap:12px; }
 .catalog-edit-bar__actions button{
   border-radius:999px;
-  padding:8px 18px;
+  padding:12px 24px;
   font-size:11px;
   font-weight:600;
 }
@@ -562,7 +562,7 @@ body.quote-no-scroll{ overflow:hidden; }
   background:var(--white);
   color:var(--navy);
   border-radius:999px;
-  padding:8px 18px;
+  padding:12px 24px;
   font-size:11px;
   font-weight:600;
   cursor:pointer;
@@ -585,7 +585,7 @@ body.quote-no-scroll{ overflow:hidden; }
   border:2px dashed var(--navy);
   color:var(--navy);
   border-radius:12px;
-  padding:16px 32px;
+  padding:20px 36px;
   font-weight:600;
   font-size:14px;
 }
@@ -708,7 +708,7 @@ body.quote-no-scroll{ overflow:hidden; }
   background:var(--orange);
   color:var(--white);
   border-radius:999px;
-  padding:8px 16px;
+  padding:12px 22px;
   font-size:11px;
   font-weight:600;
 }
@@ -717,7 +717,7 @@ body.quote-no-scroll{ overflow:hidden; }
   background:#1f8a4c;
   color:var(--white);
   border-radius:999px;
-  padding:8px 16px;
+  padding:12px 22px;
   font-size:11px;
   font-weight:600;
 }
@@ -728,7 +728,7 @@ body.quote-no-scroll{ overflow:hidden; }
   border:1px solid rgba(0,52,90,.25);
   color:var(--navy);
   border-radius:999px;
-  padding:7px 16px;
+  padding:11px 20px;
   font-size:12px;
   font-weight:600;
 }
@@ -742,7 +742,7 @@ body.quote-no-scroll{ overflow:hidden; }
   background:var(--orange);
   color:var(--white);
   border-radius:999px;
-  padding:8px 20px;
+  padding:13px 26px;
   font-size:11px;
   font-weight:600;
 }
@@ -804,7 +804,7 @@ body.quote-no-scroll{ overflow:hidden; }
 }
 .editor-modal__btn{
   border-radius:999px;
-  padding:10px 22px;
+  padding:13px 26px;
   font-weight:600;
   font-size:12px;
 }
@@ -1372,7 +1372,7 @@ body.quote-no-scroll{ overflow:hidden; }
   background:var(--orange);
   color:var(--white);
   border-radius:999px;
-  padding:6px 14px;
+  padding:10px 20px;
   font-size:11px;
   font-weight:600;
 }
